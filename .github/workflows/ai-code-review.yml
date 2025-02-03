@@ -1,4 +1,4 @@
-name: Universal AI Code Review
+name: <CodeSense?>
 
 on:
   push:
@@ -11,90 +11,103 @@ jobs:
     runs-on: ubuntu-latest
     
     env:
-      OLLAMA_HOST: http://localhost:11434
-      REVIEW_CATEGORIES: |
-        # Advanced Code Analysis Pre-Prompt
-        ## Primary Analysis Parameters
-        Perform a comprehensive static and dynamic code analysis with the following focus areas:
-        ### 1. Metric Collection
-        - Calculate cyclomatic complexity for each function
-        - Measure Halstead complexity metrics
-        - Generate maintainability index
-        - Count effective lines of code (eLOC)
-        - Assess comment-to-code ratio
-        - Identify duplicate code segments (with >3 lines)
-        ### 2. Variable and Resource Analysis
-        - Track variable lifecycle and usage patterns
-        - Identify unused or redundant variables
-        - Detect memory leaks and resource management issues
-        - Analyze scope contamination
-        - Check for proper initialization
-        ### 3. Control Flow Analysis
-        - Map execution paths
-        - Identify unreachable code
-        - Detect infinite loops
-        - Analyze exception handling paths
-        - Evaluate branching complexity
-        ### 4. Data Flow Analysis
-        - Track data transformations
-        - Identify potential null references
-        - Check for uninitialized variables
-        - Analyze type consistency
-        - Evaluate thread safety
-        ### 5. Security Assessment
-        - Check for common vulnerability patterns
-        - Analyze input validation
-        - Evaluate output encoding
-        - Assess authentication mechanisms
-        - Review authorization controls
-        ### 6. Performance Profiling
-        - Calculate algorithmic complexity
-        - Identify performance bottlenecks
-        - Analyze memory usage patterns
-        - Evaluate I/O operations
-        - Check resource utilization
-        ### 7. Code Style and Standards
-        - Verify naming conventions
-        - Check formatting consistency
-        - Assess documentation quality
-        - Evaluate code organization
-        - Review error handling practices
-        ## Output Format Requirements
-        Generate a structured analysis report including:
-        1. Executive Summary
-           - Overall code quality score (0-100)
-           - Critical issues count
-           - High-priority recommendations
-           - Technical debt assessment
-        2. Detailed Metrics
-           - Complexity scores
-           - Quality metrics
-           - Performance indicators
-           - Security ratings
-        3. Issue Analysis
-           - Categorized problems
-           - Root cause analysis
-           - Impact assessment
-           - Resolution priority
-        4. Recommendations
-           - Specific refactoring suggestions
-           - Optimization opportunities
-           - Security improvements
-           - Best practice alignment
-        5. Visualization Data
-           - Complexity trends
-           - Issue distribution
-           - Quality metrics
-           - Performance patterns
-        ## Special Considerations
-        - Identify language-specific idioms and patterns
-        - Consider framework-specific best practices
-        - Evaluate cloud-native compatibility
-        - Assess microservices architecture alignment
-        - Review API design principles
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      CODE_REVIEW_PROMPT: |
+        Respond in a JSON format for the following code review task. The model MUST return a structured JSON output with detailed explanations for each section. The output MUST adhere to the following format and include dynamically computed values, findings, and recommendations.
+
+        Analyze the following code and provide a detailed review in this exact JSON structure:
+        {
+            "structureAnalysis": {
+                "architecture": {
+                    "score": number,
+                    "findings": [{
+                        "aspect": string,
+                        "evaluation": string,
+                        "recommendation": string,
+                        "explanation": string
+                    }],
+                    "explanation": string
+                },
+                "codeQuality": {
+                    "cyclomaticComplexity": string,
+                    "documentationScore": number,
+                    "cohesionScore": number,
+                    "findings": [],
+                    "explanation": string
+                }
+            },
+            "implementationReview": {
+                "errorHandling": {
+                    "score": number,
+                    "issues": [{
+                        "issue": string,
+                        "recommendation": string,
+                        "explanation": string
+                    }],
+                    "explanation": string
+                },
+                "performance": {
+                    "timeComplexity": string,
+                    "spaceComplexity": string,
+                    "bottlenecks": [{
+                        "function": string,
+                        "issue": string,
+                        "recommendation": string,
+                        "explanation": string
+                    }],
+                    "explanation": string
+                }
+            },
+            "bestPractices": {
+                "codeStyle": {
+                    "score": number,
+                    "violations": [],
+                    "explanation": string
+                },
+                "security": {
+                    "score": number,
+                    "vulnerabilities": [{
+                        "issue": string,
+                        "recommendation": string,
+                        "explanation": string
+                    }],
+                    "explanation": string
+                }
+            },
+            "recommendations": {
+                "priority": string,
+                "items": [{
+                    "category": string,
+                    "title": string,
+                    "description": string,
+                    "severity": string,
+                    "explanation": string
+                }],
+                "explanation": string
+            },
+            "metrics": {
+                "overallScore": number,
+                "qualityScore": number,
+                "securityScore": number,
+                "performanceScore": number,
+                "maintainabilityScore": number,
+                "explanation": string
+            },
+            "corrections": {
+                "hasCorrections": boolean,
+                "correctedCode": string,
+                "changes": [{
+                    "type": string,
+                    "location": string,
+                    "original": string,
+                    "correction": string,
+                    "explanation": string
+                }],
+                "explanation": string
+            }
+        }
     
     steps:
-    # Rest of the workflow remains the same
     - name: Checkout Repository
       uses: actions/checkout@v4
     
@@ -103,206 +116,209 @@ jobs:
       with:
         python-version: '3.9'
     
-    - name: Install Ollama
+    - name: Install Required Dependencies
       run: |
-        curl -fsSL https://ollama.com/install.sh | sh
-        
-        # Start Ollama service
-        ollama serve &
-        
-        # Wait for Ollama to be fully operational
-        for i in {1..30}; do
-          if curl -s http://localhost:11434/api/health >/dev/null; then
-            echo "✓ Ollama is running"
-            break
-          fi
-          echo "Waiting for Ollama to start..."
-          sleep 2
-        done
-    
-    - name: Pull and Verify Llama Model
-      run: |
-        ollama pull llama3.2:latest
-        # Verify model is pulled correctly
-        ollama list | grep llama3.2
-    
-    - name: Install Python Dependencies
-      run: |
+        sudo apt-get install jq -y
         python -m pip install --upgrade pip
-        pip install requests flask flask-cors
+        pip install requests pygments
     
     - name: Create Review Script
       run: |
         cat > review_code.py << 'EOF'
         import os
+        import sys
         import requests
         import json
         import traceback
-        from flask import Flask, request, jsonify
-        from threading import Thread
-        import time
+        import pygments
+        from pygments.lexers import guess_lexer_for_filename
 
-        app = Flask(__name__)
+        GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
+        API_KEY = os.getenv('GEMINI_API_KEY')
+        HEADERS = {'Content-Type': 'application/json'}
+        
+        def review_code(file_content, filename, file_type):
+            # Truncate very large files to prevent API limits
+            max_content_length = 50000
+            if len(file_content) > max_content_length:
+                file_content = file_content[:max_content_length] + "\n\n... (content truncated)"
+            
+            prompt = f"""Please review the following {file_type} code from {filename}:
 
-        @app.route('/api/review', methods=['POST'])
-        def review_code():
+            {os.getenv('CODE_REVIEW_PROMPT')}
+
+            Code to review:
+            {file_content}
+            """
+            
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}]
+            }
+            
             try:
-                data = request.json
-                code = data['code']
-                filename = data['fileName']
-                
-                # Prepare prompt for code review
-                prompt = f"""Please review the following code from {filename}. 
-                
-                {os.getenv('REVIEW_CATEGORIES')}
-                
-                Here's the code to review:
-                
-                {code}
-                """
-                
-                # Send to local Ollama
+                # Send request to Gemini API
                 response = requests.post(
-                    f"{os.getenv('OLLAMA_HOST')}/api/generate",
-                    json={
-                        "model": "llama3.2:latest",
-                        "prompt": prompt,
-                        "stream": False
-                    }
+                    f"{GEMINI_API_URL}?key={API_KEY}", 
+                    headers=HEADERS, 
+                    json=payload
                 )
                 
                 if response.status_code == 200:
-                    review_text = response.json()['response']
-                    return jsonify({
-                        'fileName': filename,
-                        'reviewResults': {
-                            'comprehensive_review': review_text
-                        }
-                    })
-                else:
-                    return jsonify({'error': 'Failed to get review from Ollama'}), 500
+                    review_text = response.json()['candidates'][0]['content']['parts'][0]['text']
                     
+                    # Attempt to parse the JSON to ensure it's valid
+                    try:
+                        json_review = json.loads(review_text)
+                        return json.dumps(json_review, indent=2)
+                    except json.JSONDecodeError:
+                        # If JSON parsing fails, create a fallback JSON structure
+                        return json.dumps({
+                            "error": "Failed to parse AI review",
+                            "raw_review": review_text
+                        }, indent=2)
+                else:
+                    return json.dumps({
+                        "error": f"API request failed: {response.text}"
+                    }, indent=2)
+            
             except Exception as e:
-                return jsonify({'error': str(e), 'traceback': traceback.format_exc()}), 500
-
-        def run_flask():
-            app.run(host='0.0.0.0', port=5000)
-
-        if __name__ == '__main__':
-            flask_thread = Thread(target=run_flask)
-            flask_thread.start()
-            print("Flask server started")
-        EOF
-    
-    - name: Start Review Server
-      run: |
-        python review_code.py &
-        echo "Waiting for server to start..."
-        sleep 5
-        
-        # Verify server is running
-        if curl -s http://localhost:5000/api/review -X POST -H "Content-Type: application/json" -d '{"code":"test","fileName":"test.py"}' > /dev/null; then
-          echo "✓ Review server is operational"
-        else
-          echo "× Failed to verify review server"
-          exit 1
-        fi
-    
-    - name: Run Code Review
-      run: |
-        mkdir -p code-reviews
-        
-        python3 << 'EOF'
-        import os
-        import requests
-        import json
-        
-        def is_source_file(path):
-            source_extensions = [
-                '.py', '.js', '.jsx', '.ts', '.tsx', 
-                '.java', '.cpp', '.c', '.rb', '.go', 
-                '.php', '.swift', '.kt', '.rs', 
-                '.html', '.css', '.scss', '.lua'
-            ]
-            return any(path.endswith(ext) for ext in source_extensions)
-        
-        def should_exclude(path):
-            exclude_dirs = [
-                '.git', 'node_modules', 'dist', 'build', 
-                'venv', '.venv', 'env', '.env', 
-                'coverage', 'logs', '__pycache__'
-            ]
-            return any(exclude in path.split(os.path.sep) for exclude in exclude_dirs)
+                return json.dumps({
+                    "error": f"Review process failed: {str(e)}",
+                    "traceback": traceback.format_exc()
+                }, indent=2)
         
         def review_file(file_path):
             try:
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    code = f.read()
+                # Determine file type
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as file:
+                        code = file.read()
+                    
+                    # Guess the language/file type
+                    try:
+                        lexer = guess_lexer_for_filename(file_path, code)
+                        file_type = lexer.name
+                    except Exception:
+                        file_type = os.path.splitext(file_path)[1][1:] or 'unknown'
+                    
+                    review = review_code(code, file_path, file_type)
+                    return {
+                        "file_path": file_path,
+                        "review": review
+                    }
                 
-                response = requests.post(
-                    'http://localhost:5000/api/review',
-                    json={'code': code, 'fileName': os.path.basename(file_path)},
-                    timeout=300
-                )
-                
-                if response.status_code == 200:
-                    return response.json()
-                else:
-                    print(f"Error reviewing {file_path}: {response.text}")
-                return None
+                except UnicodeDecodeError:
+                    # Handle binary files
+                    return {
+                        "file_path": file_path,
+                        "review": json.dumps({
+                            "error": "Binary file or unsupported encoding"
+                        }, indent=2)
+                    }
             except Exception as e:
-                print(f"Exception reviewing {file_path}: {str(e)}")
-                return None
-        
-        def generate_report(reviews):
-            report = "# 🤖 AI Code Review Report\n\n"
+                return {
+                    "file_path": file_path,
+                    "review": json.dumps({
+                        "error": f"Error reviewing file: {str(e)}"
+                    }, indent=2)
+                }
+
+        def generate_report(file_reviews):
+            # Create a comprehensive markdown report
+            report = "# <CodeSense?>\n\n"
             
-            if not reviews:
+            if not file_reviews:
                 report += "No files were reviewed.\n"
                 return report
-                
-            report += f"## Overview\n\n**Files Reviewed:** {len(reviews)}\n\n"
             
-            for review in reviews:
-                if not review:
-                    continue
-                    
-                filename = review.get('fileName', 'Unknown File')
-                review_results = review.get('reviewResults', {})
-                comprehensive_review = review_results.get('comprehensive_review', '')
+            report += f"## Overview\n\n**Files Reviewed:** {len(file_reviews)}\n\n"
+            
+            for review_data in file_reviews:
+                report += f"### File: `{review_data['file_path']}`\n\n"
                 
-                report += f"## File: `{filename}`\n\n"
-                report += f"### Review\n\n{comprehensive_review}\n\n"
-                report += "---\n\n"
+                # Try to parse the review JSON and create a readable markdown
+                try:
+                    review_json = json.loads(review_data['review'])
+                    
+                    # Metrics section
+                    if 'metrics' in review_json:
+                        metrics = review_json['metrics']
+                        report += "#### Metrics:\n"
+                        report += f"- Overall Score: {metrics.get('overallScore', 'N/A')}\n"
+                        report += f"- Quality Score: {metrics.get('qualityScore', 'N/A')}\n"
+                        report += f"- Security Score: {metrics.get('securityScore', 'N/A')}\n"
+                        report += f"- Performance Score: {metrics.get('performanceScore', 'N/A')}\n"
+                        report += f"- Maintainability Score: {metrics.get('maintainabilityScore', 'N/A')}\n\n"
+                    
+                    # Recommendations section
+                    if 'recommendations' in review_json:
+                        recommendations = review_json['recommendations']
+                        report += "#### Recommendations:\n"
+                        report += f"**Priority:** {recommendations.get('priority', 'N/A')}\n\n"
+                        if recommendations.get('items'):
+                            for item in recommendations['items']:
+                                report += f"- **{item.get('title', 'Unnamed Recommendation')}**\n"
+                                report += f"  - Category: {item.get('category', 'N/A')}\n"
+                                report += f"  - Severity: {item.get('severity', 'N/A')}\n"
+                                report += f"  - Description: {item.get('description', 'N/A')}\n\n"
+                    
+                    # Full JSON for detailed inspection
+                    report += "<details>\n"
+                    report += "<summary>Full AI Review JSON</summary>\n\n"
+                    report += "```json\n"
+                    report += json.dumps(review_json, indent=2)
+                    report += "\n```\n"
+                    report += "</details>\n\n"
+                
+                except Exception as e:
+                    # Fallback if JSON parsing fails
+                    report += f"**Error parsing review:** {str(e)}\n\n"
+                    report += "```json\n"
+                    report += review_data['review']
+                    report += "\n```\n\n"
             
             return report
-        
-        # Main review process
+
+        # Main execution
         reviews = []
         for root, _, files in os.walk('.'):
             for file in files:
                 full_path = os.path.join(root, file)
                 
-                if should_exclude(full_path) or not is_source_file(full_path):
+                # Filter out non-source files and unwanted directories
+                if not any(full_path.endswith(ext) for ext in ['.py', '.js', '.jsx', '.ts', '.tsx', '.java', '.cpp', '.c', '.go', '.rs', '.php', '.html', '.css']):
                     continue
                 
-                print(f"Reviewing: {full_path}")
+                if any(exclude in full_path for exclude in ['node_modules', 'dist', 'build', 'coverage', '.git', '__pycache__']):
+                    continue
+                
+                print(f"Reviewing {full_path}...")
                 review = review_file(full_path)
-                if review:
-                    reviews.append(review)
+                reviews.append(review)
         
-        # Generate and save report
+        # Generate and save the report
         report = generate_report(reviews)
+        os.makedirs('code-reviews', exist_ok=True)
         with open('code-reviews/review_report.md', 'w', encoding='utf-8') as f:
             f.write(report)
         
         print("Review completed. Report generated at code-reviews/review_report.md")
         EOF
     
+    - name: Run Code Review
+      run: |
+        python3 review_code.py
+    
+    - name: Add Review Results to README
+      run: |
+        # Append the review report to the README file
+        cat code-reviews/review_report.md >> README.md || true
+        echo "Review results added to README.md"
+    
     - name: Commit Review Results
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git add code-reviews/review_report.md || true
-        git commit -m "Add AI Code Review Report [skip ci]" || true
+        git add README.md || true
+        git commit -m "Add AI Code Review Results to README [skip ci]" || true
         git push || true
