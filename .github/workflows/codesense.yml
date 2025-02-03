@@ -13,60 +13,52 @@ jobs:
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       REVIEW_CATEGORIES: |
-        ## Advanced Code Analysis Parameters
-
-        ### 1. Structural and Complexity Analysis
-        - Calculate cyclomatic complexity
+        # Advanced Code Analysis Pre-Prompt.
+        ## Primary Analysis Parameters
+        Perform a comprehensive static and dynamic code analysis with the following focus areas:
+        ### 1. Metric Collection
+        - Calculate cyclomatic complexity for each function
         - Measure Halstead complexity metrics
         - Generate maintainability index
         - Count effective lines of code (eLOC)
-        - Analyze code structure and modularity
-        - Identify code depth and nesting complexity
-
-        ### 2. Resource Management
-        - Detect memory allocation patterns
-        - Identify potential memory leaks
-        - Analyze resource lifecycle
-        - Check for proper resource initialization and disposal
-        - Evaluate thread safety and synchronization mechanisms
-
-        ### 3. Control Flow Optimization
-        - Map critical execution paths
-        - Detect unreachable or dead code
-        - Identify potential infinite loops
-        - Analyze exception handling strategies
-        - Evaluate branching logic efficiency
-
-        ### 4. Data Integrity and Flow
-        - Track data transformation risks
-        - Detect potential null/undefined references
-        - Validate type consistency
-        - Analyze data mutation patterns
-        - Check input validation and sanitization
-        - Assess data scope and lifetime
-
-        ### 5. Security Vulnerability Assessment
-        - Identify common security anti-patterns
-        - Evaluate authentication mechanisms
+        - Assess comment-to-code ratio
+        - Identify duplicate code segments (with >3 lines)
+        ### 2. Variable and Resource Analysis
+        - Track variable lifecycle and usage patterns
+        - Identify unused or redundant variables
+        - Detect memory leaks and resource management issues
+        - Analyze scope contamination
+        - Check for proper initialization
+        ### 3. Control Flow Analysis
+        - Map execution paths
+        - Identify unreachable code
+        - Detect infinite loops
+        - Analyze exception handling paths
+        - Evaluate branching complexity
+        ### 4. Data Flow Analysis
+        - Track data transformations
+        - Identify potential null references
+        - Check for uninitialized variables
+        - Analyze type consistency
+        - Evaluate thread safety
+        ### 5. Security Assessment
+        - Check for common vulnerability patterns
+        - Analyze input validation
+        - Evaluate output encoding
+        - Assess authentication mechanisms
         - Review authorization controls
-        - Check for potential injection vulnerabilities
-        - Analyze input/output sanitization
-        - Detect potential side-channel risks
-
         ### 6. Performance Profiling
-        - Calculate algorithmic complexity (Big O)
+        - Calculate algorithmic complexity
         - Identify performance bottlenecks
-        - Analyze time and space complexity
-        - Evaluate I/O operation efficiency
-        - Check resource utilization patterns
-
-        ### 7. Code Quality and Best Practices
-        - Verify adherence to language-specific conventions
-        - Assess documentation completeness
-        - Review error handling strategies
-        - Check code organization and readability
-        - Identify potential refactoring opportunities
-        - Evaluate naming conventions and consistency
+        - Analyze memory usage patterns
+        - Evaluate I/O operations
+        - Check resource utilization
+        ### 7. Code Style and Standards
+        - Verify naming conventions
+        - Check formatting consistency
+        - Assess documentation quality
+        - Evaluate code organization
+        - Review error handling practices
     
     steps:
     - name: Checkout Repository
@@ -77,11 +69,11 @@ jobs:
       with:
         python-version: '3.9'
     
-    - name: Install Dependencies
+    - name: Install Required Dependencies
       run: |
         sudo apt-get install jq -y
         python -m pip install --upgrade pip
-        pip install requests matplotlib seaborn pandas
+        pip install requests
     
     - name: Create Review Script
       run: |
@@ -89,121 +81,104 @@ jobs:
         import os
         import requests
         import json
-        import matplotlib.pyplot as plt
-        import seaborn as sns
-        import pandas as pd
-        import numpy as np
+        import traceback
 
         GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
         API_KEY = os.getenv('GEMINI_API_KEY')
         HEADERS = {'Content-Type': 'application/json'}
+        
+        def review_code(file_content, filename):
+            prompt = f"""Please review the following code from {filename}. 
+            
+            {os.getenv('REVIEW_CATEGORIES')}
+            
+            Here's the code to review:
+            
+            {file_content}
+            """
+            
+            payload = {
+                "contents": [{"parts": [{"text": prompt}]}]
+            }
+            
+            # Send request to Gemini API
+            response = requests.post(
+                f"{GEMINI_API_URL}?key={API_KEY}", 
+                headers=HEADERS, 
+                json=payload
+            )
+            
+            if response.status_code == 200:
+                review_text = response.json()['candidates'][0]['content']['parts'][0]['text']
+                
+                # Ensure the file name is always included in the review result
+                if filename not in review_text:
+                    review_text = f"File: {filename}\n\n{review_text}"
+                
+                return review_text
+            else:
+                raise Exception(f"Failed to get review from Gemini API: {response.text}")
+        
+        def review_file(file_path):
+            try:
+                with open(file_path, 'r', encoding='utf-8') as file:
+                    code = file.read()
+                    review = review_code(code, file_path)
+                    return review
+            except Exception as e:
+                print(f"Error reviewing {file_path}: {str(e)}")
+                return None
 
-        class CodeReviewAnalyzer:
-            def __init__(self):
-                self.analysis_data = []
-                self.visualization_dir = 'code-reviews/visualizations'
-                os.makedirs(self.visualization_dir, exist_ok=True)
-
-            def review_code(self, file_content, filename):
-                prompt = f"""Analyze the code from {filename}. 
-                Provide quantitative metrics:
-                - Cyclomatic complexity
-                - Function count
-                - Lines of code
-                - Comment ratio
-                """
-                
-                payload = {
-                    "contents": [{"parts": [{"text": prompt}]}]
-                }
-                
-                response = requests.post(
-                    f"{GEMINI_API_URL}?key={API_KEY}", 
-                    headers=HEADERS, 
-                    json=payload
-                )
-                
-                metrics = self._generate_mock_metrics(filename)
-                self.analysis_data.append(metrics)
-                return metrics
-
-            def _generate_mock_metrics(self, filename):
-                return {
-                    'filename': filename,
-                    'cyclomatic_complexity': np.random.randint(1, 20),
-                    'function_count': np.random.randint(5, 50),
-                    'lines_of_code': np.random.randint(100, 1000),
-                    'comment_ratio': round(np.random.uniform(0.1, 0.5), 2)
-                }
-
-            def generate_visualizations(self):
-                df = pd.DataFrame(self.analysis_data)
-                
-                plt.figure(figsize=(12, 6))
-                metrics = ['cyclomatic_complexity', 'function_count', 'lines_of_code']
-                df[metrics].plot(kind='bar', figsize=(10, 6))
-                plt.title('Code Metrics Comparison')
-                plt.xlabel('Files')
-                plt.ylabel('Metric Value')
-                plt.xticks(range(len(df)), df['filename'], rotation=45, ha='right')
-                plt.tight_layout()
-                plt.savefig(f'{self.visualization_dir}/code_metrics.png')
-                plt.close()
-
-                return df
-
-            def generate_report(self, df):
-                report = "# <CodeSense?>\n\n"
-                report += "## Code Metrics Overview\n\n"
-                report += "### Visualization\n"
-                report += "![Code Metrics](/code-reviews/visualizations/code_metrics.png)\n\n"
-                
-                report += "### Detailed Metrics\n\n"
-                report += "| Filename | Cyclomatic Complexity | Function Count | Lines of Code | Comment Ratio |\n"
-                report += "|----------|----------------------|---------------|--------------|---------------|\n"
-                
-                for _, row in df.iterrows():
-                    report += f"| {row['filename']} | {row['cyclomatic_complexity']} | {row['function_count']} | {row['lines_of_code']} | {row['comment_ratio']} |\n"
-                
+        def generate_report(reviews):
+            report = "# 🤖 <CodeSense?>\n\n"
+            report += "### Here are the detailed reviews for your code:\n\n"
+            
+            if not reviews:
+                report += "No files were reviewed.\n"
                 return report
+                
+            report += f"## Overview\n\n**Files Reviewed:** {len(reviews)}\n\n"
+            
+            for review in reviews:
+                if review:
+                    report += f"## Review\n\n{review}\n\n"
+                    report += "---\n\n"
+            
+            return report
 
-        def main():
-            analyzer = CodeReviewAnalyzer()
-            
-            for root, _, files in os.walk('.'):
-                for file in files:
-                    full_path = os.path.join(root, file)
-                    
-                    if not any(full_path.endswith(ext) for ext in ['.py', '.js', '.jsx', '.ts', '.tsx', '.java', '.cpp', '.c', '.go', '.rs', '.php']):
-                        continue
-                    
-                    if any(exclude in full_path for exclude in ['node_modules', 'dist', 'build', 'coverage', '.git', '__pycache__']):
-                        continue
-                    
-                    print(f"Analyzing {full_path}...")
-                    with open(full_path, 'r', encoding='utf-8') as f:
-                        code = f.read()
-                        analyzer.review_code(code, full_path)
-            
-            df = analyzer.generate_visualizations()
-            report = analyzer.generate_report(df)
-            
-            os.makedirs('code-reviews', exist_ok=True)
-            with open('code-reviews/review_report.md', 'w', encoding='utf-8') as f:
-                f.write(report)
-            
-            print("Code review completed.")
-
-        if __name__ == "__main__":
-            main()
+        reviews = []
+        for root, _, files in os.walk('.'):
+            for file in files:
+                full_path = os.path.join(root, file)
+                
+                # Filter out non-source files
+                if not any(full_path.endswith(ext) for ext in ['.py', '.js', '.jsx', '.ts', '.tsx', '.java', '.cpp', '.c', '.go', '.rs', '.php', '.html', '.css']):
+                    continue
+                
+                # Exclude unwanted directories
+                if any(exclude in full_path for exclude in ['node_modules', 'dist', 'build', 'coverage', '.git', '__pycache__']):
+                    continue
+                
+                print(f"Reviewing {full_path}...")
+                review = review_file(full_path)
+                if review:
+                    reviews.append(review)
+        
+        report = generate_report(reviews)
+        with open('code-reviews/review_report.md', 'w', encoding='utf-8') as f:
+            f.write(report)
+        
+        print("Review completed. Report generated at code-reviews/review_report.md")
         EOF
     
     - name: Run Code Review
       run: |
+        mkdir -p code-reviews
         python3 review_code.py
     
     - name: Add Review Results to README
       run: |
+        # Append the review report to the README file
         cat code-reviews/review_report.md >> README.md
         echo "Review results added to README.md"
     
@@ -211,6 +186,6 @@ jobs:
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git add README.md code-reviews/visualizations/code_metrics.png || true
-        git commit -m "Add AI Code Review Results [skip ci]" || true
+        git add README.md || true
+        git commit -m "Add AI Code Review Results to README [skip ci]" || true
         git push || true
