@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Configuration
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')  # Make sure to set this environment variable
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
 
 CODE_REVIEW_PROMPT = """Respond in a JSON format for the following code review task. The model MUST return a structured JSON output with detailed explanations for each section. The output MUST adhere to the following format and include dynamically computed values, findings, and recommendations.
@@ -91,8 +91,22 @@ Analyze the following code and provide a detailed review in this exact JSON stru
         "performanceScore": number,
         "maintainabilityScore": number,
         "explanation": string
+    },
+    "corrections": {
+        "hasCorrections": boolean,
+        "correctedCode": string,
+        "changes": [{
+            "type": string,
+            "location": string,
+            "original": string,
+            "correction": string,
+            "explanation": string
+        }],
+        "explanation": string
     }
 }
+
+If there are code improvements or corrections needed, provide the corrected version of the code in the corrections.correctedCode field, and list all changes made in the corrections.changes array. Include the specific location, original code, correction, and explanation for each change.
 
 Ensure all scores are between 0 and 100, and provide detailed explanations for each section."""
 
@@ -122,11 +136,33 @@ def sanitize_json_response(response_text):
         except (json.JSONDecodeError, ValueError) as e:
             return {"error": f"Failed to parse JSON: {str(e)}"}
 
+def validate_analysis_result(result):
+    """Validate the structure and content of the analysis result."""
+    required_sections = [
+        "structureAnalysis", "implementationReview", "bestPractices",
+        "recommendations", "metrics", "corrections"
+    ]
+    
+    if not all(section in result for section in required_sections):
+        return False, "Missing required sections in analysis result"
+    
+    # Validate corrections section
+    corrections = result.get("corrections", {})
+    if not isinstance(corrections.get("hasCorrections"), bool):
+        return False, "Invalid corrections.hasCorrections field"
+    
+    if corrections["hasCorrections"]:
+        if not corrections.get("correctedCode"):
+            return False, "Missing correctedCode when hasCorrections is true"
+        if not isinstance(corrections.get("changes"), list):
+            return False, "Invalid corrections.changes field"
+    
+    return True, None
+
 @app.route('/ping', methods=['GET'])
 def ping():
     """Health check endpoint."""
     try:
-        # Test the Gemini API connection with a simple request
         url = f"{GEMINI_API_URL}?key={GEMINI_API_KEY}"
         payload = {
             "contents": [{
@@ -180,6 +216,11 @@ def review_code():
         analysis_result = sanitize_json_response(response_text)
         if "error" in analysis_result:
             return jsonify({"error": "Failed to generate valid analysis"}), 500
+
+        # Validate the structure and content of the analysis result
+        is_valid, error_message = validate_analysis_result(analysis_result)
+        if not is_valid:
+            return jsonify({"error": error_message}), 500
 
         return jsonify(analysis_result), 200
 

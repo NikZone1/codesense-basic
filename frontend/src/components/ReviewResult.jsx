@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import { 
-  ArrowLeft, 
-  AlertTriangle, 
-  CheckCircle, 
+import { useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  AlertTriangle,
+  CheckCircle,
   XCircle,
   Code,
   AlertCircle,
   Shield,
   Zap,
   FileCode,
-  BarChart4
+  BarChart4,
+  GitCompare,
+  FileWarning
 } from 'lucide-react';
 
 const ReviewResult = () => {
   const navigate = useNavigate();
   const [review, setReview] = useState(null);
+  const [activeTab, setActiveTab] = useState('original');
 
   useEffect(() => {
     const storedReview = localStorage.getItem('codeReviewResult');
@@ -66,20 +69,95 @@ const ReviewResult = () => {
     </div>
   );
 
+  const CodeSection = ({ review }) => {
+    if (!review?.corrections?.hasCorrections) {
+      return (
+        <div className="flex items-center justify-center p-8 border border-gray-700/30 rounded-lg">
+          <FileWarning className="h-6 w-6 text-gray-400 mr-2" />
+          <span className="text-gray-400">No code corrections available</span>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        <div className="flex space-x-4 mb-4">
+          <button
+            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+              activeTab === 'original' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
+            onClick={() => setActiveTab('original')}
+          >
+            Original Code
+          </button>
+          <button
+            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+              activeTab === 'corrected' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
+            onClick={() => setActiveTab('corrected')}
+          >
+            Corrected Code
+          </button>
+          <button
+            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+              activeTab === 'changes' ? 'bg-blue-500 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
+            onClick={() => setActiveTab('changes')}
+          >
+            Changes
+          </button>
+        </div>
+
+        {activeTab === 'changes' ? (
+          <div className="space-y-4">
+            {review.corrections.changes.map((change, index) => (
+              <div key={index} className="border border-gray-700/30 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <GitCompare className="h-5 w-5 text-blue-400" />
+                  <span className="text-blue-400 font-medium">{change.type}</span>
+                  <span className="text-gray-400 text-sm">({change.location})</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                  <div className="p-3 bg-red-500/10 rounded-lg">
+                    <div className="text-red-400 font-medium mb-2">Original:</div>
+                    <pre className="text-gray-300 overflow-x-auto">{change.original}</pre>
+                  </div>
+                  <div className="p-3 bg-green-500/10 rounded-lg">
+                    <div className="text-green-400 font-medium mb-2">Correction:</div>
+                    <pre className="text-gray-300 overflow-x-auto">{change.correction}</pre>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <span className="text-purple-400 font-medium">Explanation: </span>
+                  <span className="text-gray-300">{change.explanation}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+            <pre className="text-gray-300 whitespace-pre-wrap">
+              {activeTab === 'original' ? localStorage.getItem('originalCode') : review.corrections.correctedCode}
+            </pre>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   if (!review) return null;
 
   const { metrics, structureAnalysis, implementationReview, bestPractices, recommendations } = review;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
-      {/* Import font */}
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+          @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
         `}
       </style>
 
-      {/* Apply font globally to body */}
       <div className="max-w-6xl mx-auto" style={{ fontFamily: "'Prompt', sans-serif" }}>
         <button
           onClick={() => navigate('/')}
@@ -90,17 +168,12 @@ const ReviewResult = () => {
         </button>
 
         <div className="text-center mb-12">
-        {/* Import font */}
-<style>
-  {`
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-  `}
-</style>
-
-{/* Apply font to h1 only */}
-<h1 className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500" style={{ fontFamily: "'Press Start 2P', cursive" }}>
-  &lt;CodeSense?&gt;
-</h1>
+          <h1 
+            className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500" 
+            style={{ fontFamily: "'Press Start 2P', cursive" }}
+          >
+            &lt;CodeSense?&gt;
+          </h1>
           <p className="mt-4 text-2xl text-gray-300">Comprehensive Review and Recommendations</p>
         </div>
 
@@ -125,9 +198,15 @@ const ReviewResult = () => {
           ))}
         </div>
 
+        {/* Code Corrections Section */}
+        <div className="mb-8">
+          <SectionCard title="Code Analysis" icon={Code}>
+            <CodeSection review={review} />
+          </SectionCard>
+        </div>
+
         {/* Main Analysis Sections */}
         <div className="space-y-8">
-          {/* Structure Analysis */}
           <SectionCard 
             title="Architecture & Code Quality" 
             icon={Code}
@@ -138,7 +217,6 @@ const ReviewResult = () => {
             ))}
           </SectionCard>
 
-          {/* Implementation Review */}
           <SectionCard 
             title="Implementation & Performance" 
             icon={Zap}
@@ -149,7 +227,6 @@ const ReviewResult = () => {
             ))}
           </SectionCard>
 
-          {/* Best Practices */}
           <SectionCard 
             title="Best Practices & Security" 
             icon={Shield}
@@ -160,7 +237,6 @@ const ReviewResult = () => {
             ))}
           </SectionCard>
 
-          {/* Recommendations */}
           <SectionCard title="Key Recommendations" icon={AlertCircle}>
             <div className="space-y-4">
               {recommendations.items.map((item, index) => (

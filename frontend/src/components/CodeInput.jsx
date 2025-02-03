@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { AlertCircle, Loader, UploadCloud, Circle, Minus, Square } from "lucide-react";
+import { Loader, UploadCloud, Circle } from "lucide-react";
 import Typewriter from 'typewriter-effect';
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -51,7 +51,11 @@ const CodeInput = () => {
           'Content-Type': 'application/json'
         }
       });
+      
+      // Store both the review result AND the original code
       localStorage.setItem('codeReviewResult', JSON.stringify(response.data));
+      localStorage.setItem('originalCode', code); // Store the original code
+      
       navigate('/review');
     } catch (error) {
       console.error("Error during code review:", error);
@@ -77,24 +81,23 @@ const CodeInput = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto mt-20">
-      
-      <div className="text-center mb-12">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-  </style>
-  <h1 className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500" style={{ fontFamily: "'Press Start 2P', cursive" }}>
-    &lt;CodeSense?&gt;
-  </h1>
-  <p className="mt-4 text-2xl text-gray-300">
-  <Typewriter
-  options={{
-    strings: ['Smart. Fast. Flawless.', 'AI powered code reviews at your fingertips.'],
-    autoStart: true,
-    loop: true,
-  }}
-/>
-  </p>
-</div>
+        <div className="text-center mb-12">
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+          </style>
+          <h1 className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500" style={{ fontFamily: "'Press Start 2P', cursive" }}>
+            &lt;CodeSense?&gt;
+          </h1>
+          <p className="mt-4 text-2xl text-gray-300">
+            <Typewriter
+              options={{
+                strings: ['Smart. Fast. Flawless.', 'AI powered code reviews at your fingertips.'],
+                autoStart: true,
+                loop: true,
+              }}
+            />
+          </p>
+        </div>
 
         <div className="bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-2xl border border-gray-700/30 overflow-hidden">
           {/* Mac-style window controls */}
