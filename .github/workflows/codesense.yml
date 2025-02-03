@@ -1,4 +1,4 @@
-name: <CodeSense?>
+name: Universal AI Code Review
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       REVIEW_CATEGORIES: |
-        # Advanced Code Analysis Pre-Prompt.
+        # Advanced Code Analysis Pre-Prompt
         ## Primary Analysis Parameters
         Perform a comprehensive static and dynamic code analysis with the following focus areas:
         ### 1. Metric Collection
@@ -130,7 +130,7 @@ jobs:
                 return None
 
         def generate_report(reviews):
-            report = "# 🤖 <CodeSense?>\n\n"
+            report = "# 🤖 AI Code Review Report\n\n"
             report += "### Here are the detailed reviews for your code:\n\n"
             
             if not reviews:
