@@ -17,3 +17,8 @@
 | ./frontend/src/components/ReviewResult.jsx | 7 | 10 | 507 | 0.19 |
 | ./frontend/src/components/CodeInput.jsx | 2 | 41 | 318 | 0.33 |
 | ./backend/main.py | 17 | 8 | 625 | 0.4 |
+# 🤖 <CodeSense?>
+
+### Here are the detailed reviews for your code:
+
+No files were reviewed.
