@@ -1,7 +1,7 @@
 <div align="center">
 
-# CodeSense 🧠
-## AI-Powered Code Review System
+<img src="" alt="CodeSense Logo" width="200">
+
 
 <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
 <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white">
