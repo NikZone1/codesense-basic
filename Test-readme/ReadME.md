@@ -100,6 +100,7 @@ cd codesense-basic
 cd frontend
 npm install
 ```
+Create a `.env` file in the `frontend` directory with the required environment variables.
 
 ### 3️⃣ Backend Setup
 ```bash
@@ -108,6 +109,64 @@ python3 -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
+Create a `.env` file in the `backend` directory with the necessary configuration.
+
+---
+
+<div align="center">
+
+## 🖥️ Running the Application
+
+</div>
+
+### 1️⃣ Start Backend Server
+```bash
+# Ensure virtual environment is activated
+python main.py
+```
+
+### 2️⃣ Start Frontend Development Server
+```bash
+cd frontend
+npm run dev
+```
+
+---
+
+<div align="center">
+
+## ⚙️ GitHub Actions Setup
+
+</div>
+
+### 1️⃣ Configure Repository Settings
+- Navigate to repository **Settings → Actions → General**
+- Enable Actions
+- Set **Workflow permissions** to **Read and write**
+
+### 2️⃣ Create Workflow File
+- Create `.github/workflows/code-analysis.yml`
+- Copy configuration from `.github/workflows/ai-code-review.yml`
+
+---
+
+<div align="center">
+
+## 📈 Expected Outcomes
+
+</div>
+
+🎯 **Enhanced Code Quality**  
+Immediate AI-powered analysis for issue identification and resolution
+
+⚡ **Streamlined Workflow**  
+Intuitive interface and automated reporting for faster development
+
+🔄 **Automated Repository Management**  
+Continuous feedback for pull requests and code reviews
+
+📈 **Scalable Platform**  
+Supports large codebases and future enhancements
 
 ---
 
@@ -118,6 +177,8 @@ pip install -r requirements.txt
 [<img src="https://img.shields.io/badge/GitHub-Rubbershredder-181717?style=for-the-badge&logo=github">](https://github.com/Rubbershredder/)
 [<img src="https://img.shields.io/badge/GitHub-NikZone1-181717?style=for-the-badge&logo=github">](https://github.com/NikZone1)
 [<img src="https://img.shields.io/badge/GitHub-suraj0--11-181717?style=for-the-badge&logo=github">](https://github.com/suraj0-11)
+
+We welcome contributions from the community! Please follow standard GitHub pull request procedures.
 
 </div>
 
@@ -132,6 +193,16 @@ pip install -r requirements.txt
 <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white">
 
 </div>
+
+---
+
+<div align="center">
+
+## 📝 Notes on AI Models
+
+</div>
+
+This project is designed to work with multiple AI models, including **Ollama Llama 3.2** and **Gemini API**. While the system has been tested and verified for Gemini and Ollama, it is flexible enough to integrate with other compatible models. Ensure you configure the appropriate API keys and settings in the `.env` files for seamless operation.
 
 ---
 
