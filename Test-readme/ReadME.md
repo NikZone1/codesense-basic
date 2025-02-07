@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://drive.google.com/file/d/1_2oXn0LZRi8c6l6_XysBZ-jLg-5TMIbQ/view?usp=sharing" alt="CodeSense Logo" width="200">
+
 
 
 <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
