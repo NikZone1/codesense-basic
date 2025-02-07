@@ -92,7 +92,11 @@ CodeSense - Code Reviewer is an intelligent code analysis system that automates 
 - Rapid analysis results for large codebases
 - Scalable platform supporting future enhancements
 
-## Contributing
+## Contributors
+
+https://github.com/Rubbershredder/
+https://github.com/NikZone1
+https://github.com/suraj0-11
 
 We welcome contributions from the community. Please follow standard GitHub pull request procedures.
 
