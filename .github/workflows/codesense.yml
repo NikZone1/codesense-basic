@@ -128,7 +128,7 @@ jobs:
                 return None
 
         def generate_report(reviews):
-            report = "# 🤖 AI Code Review Report\n\n"
+            report = "# <CodeSense?>\n\n"
             report += "### Here are the detailed reviews for your code:\n\n"
             
             if not reviews:
