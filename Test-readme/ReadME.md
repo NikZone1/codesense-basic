@@ -1,214 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CodeSense - Code Reviewer</title>
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-pO8Cw+UnxTt9T2gy7IXIhlMpaEnOE0bYzN6r8FfKpJ3z5V8/vvysr0eI/Hl8hvX+ft1g+GFw5pLrT+gkPz6+IQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <style>
-    /* Reset some default styles */
-    * {
-      box-sizing: border-box;
-    }
+<div align="center">
 
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f7f9;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
+# CodeSense 🧠
+## AI-Powered Code Review System
 
-    .container {
-      max-width: 900px;
-      width: 100%;
-      background: #fff;
-      margin: 20px;
-      padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
+<img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white">
+<img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue">
+<img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white">
 
-    h1, h2 {
-      text-align: center;
-      color: #222;
-    }
+</div>
 
-    h1 {
-      font-size: 2.5em;
-      margin-bottom: 20px;
-    }
+**CodeSense** is an intelligent code analysis system that automates and streamlines the code review process in modern development environments. Powered by advanced AI models like **Ollama Llama 3.2** and **Gemini API**, it provides comprehensive code analysis through a responsive web interface and seamless GitHub Actions integration.
 
-    h2 {
-      font-size: 1.8em;
-      margin-top: 40px;
-      margin-bottom: 10px;
-      border-bottom: 2px solid #ddd;
-      padding-bottom: 5px;
-    }
+---
 
-    .section {
-      margin-bottom: 30px;
-    }
+<div align="center">
 
-    p, li {
-      line-height: 1.6;
-      font-size: 1em;
-    }
+## ✨ Features
 
-    ul {
-      list-style: none;
-      padding-left: 0;
-    }
+</div>
 
-    ul li {
-      margin-bottom: 10px;
-      padding-left: 30px;
-      position: relative;
-    }
+🤖 **Intelligent Code Analysis**  
+Advanced AI models detect security vulnerabilities, performance issues, and code quality concerns
 
-    ul li::before {
-      content: "\f058"; /* Font Awesome check icon */
-      font-family: "Font Awesome 6 Free";
-      font-weight: 900;
-      position: absolute;
-      left: 0;
-      color: #28a745;
-    }
+🌐 **Dual-Platform Solution**  
+Responsive web interface + GitHub Actions integration
 
-    pre {
-      background-color: #f1f1f1;
-      padding: 15px;
-      border-radius: 5px;
-      overflow-x: auto;
-      font-family: Consolas, "Courier New", monospace;
-      font-size: 0.95em;
-    }
+📊 **Automated Reporting**  
+Comprehensive markdown reports for clear team communication
 
-    a {
-      color: #007bff;
-      text-decoration: none;
-    }
-    
-    a:hover {
-      text-decoration: underline;
-    }
+🔄 **Language-Agnostic Support**  
+Compatible with diverse tech stacks and microservices
 
-    .icon {
-      margin-right: 8px;
-      color: #007bff;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <!-- Header -->
-    <h1><i class="fa-solid fa-code icon"></i>CodeSense - Code Reviewer</h1>
+🧩 **Model Flexibility**  
+Supports multiple AI models (Ollama Llama 3.2, Gemini API)
 
-    <!-- Features Section -->
-    <div class="section">
-      <h2><i class="fa-solid fa-star icon"></i>Features</h2>
-      <ul>
-        <li><strong>Intelligent Code Analysis:</strong> Leverages AI models (Ollama Llama 3.2 or Gemini API) to detect security vulnerabilities, performance bottlenecks, and code quality issues.</li>
-        <li><strong>Dual-Platform Solution:</strong> Offers a responsive web interface (built with React, TypeScript, and Tailwind CSS) and GitHub Actions integration for flexible usage.</li>
-        <li><strong>Automated Reporting:</strong> Generates detailed markdown reports for clear communication across development teams.</li>
-        <li><strong>Language-Agnostic Support:</strong> Compatible with diverse technology stacks and modern microservices architectures.</li>
-        <li><strong>Model Flexibility:</strong> Supports multiple AI models (e.g., Ollama Llama 3.2, Gemini API, or any other compatible model).</li>
-      </ul>
-    </div>
+---
 
-    <!-- System Architecture Section -->
-    <div class="section">
-      <h2><i class="fa-solid fa-diagram-project icon"></i>System Architecture</h2>
-      <p><strong>Web Application</strong></p>
-      <p><em>Frontend:</em> Built with React (using Vite) in TypeScript and styled with Tailwind CSS. Supports code paste and file uploads for analysis.</p>
-      <p><em>Backend:</em> Powered by Python Flask integrating with AI models (Ollama Llama 3.2 or Gemini API) for code analysis using custom prompts and formatting.</p>
-      <p><strong>GitHub Integration:</strong> Includes a custom YAML workflow for repository-wide code scanning and automated markdown report generation for pull requests and reviews.</p>
-    </div>
+<div align="center">
 
-    <!-- Installation & Setup Section -->
-    <div class="section">
-      <h2><i class="fa-solid fa-cogs icon"></i>Installation & Setup</h2>
-      <p><strong>Prerequisites:</strong> Node.js, npm, Python 3, Ollama, and a Gemini API key.</p>
-      <p><strong>Steps:</strong></p>
-      <pre>
-# Clone the Repository
-git clone https://github.com/suraj0-11/codesense-basic.git
+## 🏗️ System Architecture
+
+</div>
+
+### 🎨 Web Application
+
+#### Frontend
+```
+📱 Framework: React with Vite
+🔷 Language: TypeScript
+🎯 Styling: Tailwind CSS
+📤 Features: Text paste and file upload
+```
+
+#### Backend
+```
+⚡ Server: Python Flask
+🧠 AI: Ollama Llama 3.2 / Gemini API
+⚙️ Processing: Custom prompts and formatting
+```
+
+### 🔗 GitHub Integration
+```
+📋 Custom YAML Workflow
+📝 Automated PR Reports
+```
+
+---
+
+<div align="center">
+
+## 📋 Prerequisites
+
+</div>
+
+Before setup, install:
+
+<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"> Download from [nodejs.org](https://nodejs.org)  
+<img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue"> Download from [python.org](https://python.org)  
+<img src="https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=llama&logoColor=white"> See [Ollama's GitHub](https://github.com/ollama/ollama)  
+🔑 **Gemini API Key** (if using Gemini)
+
+---
+
+<div align="center">
+
+## 🚀 Installation
+
+</div>
+
+### 1️⃣ Clone Repository
+```bash
+https://github.com/suraj0-11/codesense-basic.git
 cd codesense-basic
+```
 
-# Frontend Setup
+### 2️⃣ Frontend Setup
+```bash
 cd frontend
 npm install
+```
 
-# Backend Setup
+### 3️⃣ Backend Setup
+```bash
 cd ../backend
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-      </pre>
-    </div>
+```
 
-    <!-- Running the Application Section -->
-    <div class="section">
-      <h2><i class="fa-solid fa-play icon"></i>Running the Application</h2>
-      <p><strong>Start Backend Server:</strong></p>
-      <pre>
-python main.py
-      </pre>
-      <p><strong>Start Frontend Development Server:</strong></p>
-      <pre>
-cd frontend
-npm run dev
-      </pre>
-    </div>
+---
 
-    <!-- GitHub Actions Section -->
-    <div class="section">
-      <h2><i class="fa-solid fa-code-branch icon"></i>GitHub Actions Setup</h2>
-      <p>
-        Configure your repository by enabling GitHub Actions (Settings → Actions) and creating a workflow file <code>.github/workflows/code-analysis.yml</code> with the configuration from <code>.github/workflows/ai-code-review.yml</code>.
-      </p>
-    </div>
+<div align="center">
 
-    <!-- Expected Outcomes Section -->
-    <div class="section">
-      <h2><i class="fa-solid fa-check-circle icon"></i>Expected Outcomes</h2>
-      <ul>
-        <li>Enhanced code quality with immediate AI-powered analysis.</li>
-        <li>Streamlined workflow via an intuitive interface and automated reporting.</li>
-        <li>Automated repository management with continuous feedback.</li>
-        <li>Scalable platform that supports large codebases and future enhancements.</li>
-      </ul>
-    </div>
+## 👥 Contributors
 
-    <!-- Contributors Section -->
-    <div class="section">
-      <h2><i class="fa-solid fa-users icon"></i>Contributors</h2>
-      <p>
-        <a href="https://github.com/Rubbershredder/">Rubbershredder</a>,
-        <a href="https://github.com/NikZone1">NikZone1</a>,
-        <a href="https://github.com/suraj0-11">suraj0-11</a>
-      </p>
-    </div>
+[<img src="https://img.shields.io/badge/GitHub-Rubbershredder-181717?style=for-the-badge&logo=github">](https://github.com/Rubbershredder/)
+[<img src="https://img.shields.io/badge/GitHub-NikZone1-181717?style=for-the-badge&logo=github">](https://github.com/NikZone1)
+[<img src="https://img.shields.io/badge/GitHub-suraj0--11-181717?style=for-the-badge&logo=github">](https://github.com/suraj0-11)
 
-    <!-- Acknowledgments Section -->
-    <div class="section">
-      <h2><i class="fa-solid fa-thumbs-up icon"></i>Acknowledgments</h2>
-      <p>
-        Special thanks to Ollama Llama 3.2, Gemini API, and GitHub Actions for powering this project.
-      </p>
-    </div>
+</div>
 
-    <!-- Footer Section -->
-    <div class="section">
-      <p>For issues or feature requests, please open an issue on the <a href="https://github.com/suraj0-11/codesense-basic.git">GitHub repository</a>.</p>
-      <p>Happy coding! 🚀</p>
-    </div>
-  </div>
-</body>
-</html>
+---
+
+<div align="center">
+
+## 🙏 Acknowledgments
+
+<img src="https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=llama&logoColor=white">
+<img src="https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white">
+<img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white">
+
+</div>
+
+---
+
+<div align="center">
+
+For issues or feature requests, please open an issue on the [GitHub repository](https://github.com/suraj0-11/codesense-basic.git).
+
+Happy coding! 🚀
+
+</div>
