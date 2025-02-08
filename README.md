@@ -1,9 +1,8 @@
-<img src="logo.png" alt="CodeSense Logo" width="200">
-
 <div align="center">
 
+<img src="logo.png" alt="CodeSense Logo" width="400">
 
-
+<br><br>
 
 <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
 <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white">
@@ -11,6 +10,7 @@
 <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white">
 
 </div>
+
 
 **CodeSense** is an intelligent code analysis system that automates and streamlines the code review process in modern development environments. Powered by advanced AI models like **Ollama Llama 3.2** and **Gemini API**, it provides comprehensive code analysis through a responsive web interface and seamless GitHub Actions integration.
 
