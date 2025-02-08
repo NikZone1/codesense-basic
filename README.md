@@ -1,3 +1,5 @@
+<img src="logo.png" alt="CodeSense Logo" width="200">
+
 <div align="center">
 
 
