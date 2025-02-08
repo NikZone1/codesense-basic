@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="logo.png" alt="CodeSense Logo" width="400">
+<img src="logo.png" alt="CodeSense Logo" width="500">
 
 <br><br>
 
