@@ -111,7 +111,7 @@ jobs:
                 review_text = response.json()['candidates'][0]['content']['parts'][0]['text']
                 
                 if filename not in review_text:
-                    review_text = f"File: {filename}\n\n{review_text}"
+                    review_text = f"### File: {filename}\n\n{review_text}"
                 
                 return review_text
             else:
@@ -121,27 +121,30 @@ jobs:
             try:
                 with open(file_path, 'r', encoding='utf-8') as file:
                     code = file.read()
-                    review = review_code(code, file_path)
-                    return review
+                    return review_code(code, file_path)
             except Exception as e:
                 print(f"Error reviewing {file_path}: {str(e)}")
                 return None
 
         def generate_report(reviews):
-            report = "# <CodeSense?>\n\n"
+            report = "<div align='center'>\n\n"
+            report += "![CodeSense Logo](../logo.png)\n\n"  # Adding the logo
+            report += "</div>\n\n"
+    
+            report += "# CodeSense Review Report\n\n"
             report += "### Here are the detailed reviews for your code:\n\n"
-            
+
             if not reviews:
                 report += "No files were reviewed.\n"
                 return report
-                
+
             report += f"## Overview\n\n**Files Reviewed:** {len(reviews)}\n\n"
-            
+
             for review in reviews:
                 if review:
                     report += f"## Review\n\n{review}\n\n"
                     report += "---\n\n"
-            
+
             return report
 
         reviews = []
