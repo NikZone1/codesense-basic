@@ -1,86 +1,131 @@
-# <CodeSense?>
+<div align="center">
 
-**CodeSense - Code Reviewer** is an intelligent code analysis system designed to automate and streamline the code review process in modern development environments. Powered by advanced AI models like **Ollama Llama 3.2** and **Gemini API**, it provides comprehensive code analysis through a responsive web interface and seamless GitHub Actions integration.
+
+
+
+<img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB">
+<img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white">
+<img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue">
+<img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white">
+
+</div>
+
+**CodeSense** is an intelligent code analysis system that automates and streamlines the code review process in modern development environments. Powered by advanced AI models like **Ollama Llama 3.2** and **Gemini API**, it provides comprehensive code analysis through a responsive web interface and seamless GitHub Actions integration.
 
 ---
 
-## Features
+<div align="center">
 
-- **Intelligent Code Analysis**: Leverages AI models (Ollama Llama 3.2 or Gemini API) to detect security vulnerabilities, performance bottlenecks, and code quality issues.
-- **Dual-Platform Solution**: Offers a responsive web interface (built with React, TypeScript, and Tailwind CSS) and GitHub Actions integration for flexible usage.
-- **Automated Reporting**: Generates detailed markdown reports for clear communication across development teams.
-- **Language-Agnostic Support**: Compatible with diverse technology stacks and modern microservices architectures.
-- **Model Flexibility**: Supports multiple AI models (e.g., Ollama Llama 3.2, Gemini API, or any other compatible model). Currently tested and verified for **Gemini API** and **Ollama**.
+## ✨ Features
+
+</div>
+
+🤖 **Intelligent Code Analysis**  
+Advanced AI models detect security vulnerabilities, performance issues, and code quality concerns
+
+🌐 **Dual-Platform Solution**  
+Responsive web interface + GitHub Actions integration
+
+📊 **Automated Reporting**  
+Comprehensive markdown reports for clear team communication
+
+🔄 **Language-Agnostic Support**  
+Compatible with diverse tech stacks and microservices
+
+🧩 **Model Flexibility**  
+Supports multiple AI models (Ollama Llama 3.2, Gemini API)
 
 ---
 
-## System Architecture
+<div align="center">
 
-### Web Application
+## 🏗️ System Architecture
+
+</div>
+
+### 🎨 Web Application
 
 #### Frontend
-- **Framework**: React with Vite
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Features**: Text paste and file upload support for code analysis.
+```
+📱 Framework: React with Vite
+🔷 Language: TypeScript
+🎯 Styling: Tailwind CSS
+📤 Features: Text paste and file upload
+```
 
 #### Backend
-- **Server**: Python Flask
-- **AI Integration**: Ollama Llama 3.2 or Gemini API
-- **Processing**: Custom prompts and response formatting for accurate code analysis.
+```
+⚡ Server: Python Flask
+🧠 AI: Ollama Llama 3.2 / Gemini API
+⚙️ Processing: Custom prompts and formatting
+```
 
-### GitHub Integration
-- **Custom YAML Workflow**: GitHub Actions integration for repository-wide code scanning.
-- **Automated Reporting**: Generates markdown reports for pull requests and code reviews.
-
----
-
-## Prerequisites
-
-Before setting up the project, ensure you have the following installed:
-
-- **Node.js** and **npm**: Download from [nodejs.org](https://nodejs.org).
-- **Python 3**: Download from [python.org](https://python.org).
-- **Ollama**: Installation instructions available at [Ollama's GitHub repository](https://github.com/ollama/ollama).
-- **Gemini API Key**: If using Gemini, ensure you have an API key.
+### 🔗 GitHub Integration
+```
+📋 Custom YAML Workflow
+📝 Automated PR Reports
+```
 
 ---
 
-## Installation
+<div align="center">
 
-### 1. Clone the Repository
+## 📋 Prerequisites
+
+</div>
+
+Before setup, install:
+
+<img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"> Download from [nodejs.org](https://nodejs.org)  
+<img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue"> Download from [python.org](https://python.org)  
+<img src="https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=llama&logoColor=white"> See [Ollama's GitHub](https://github.com/ollama/ollama)  
+🔑 **Gemini API Key** (if using Gemini)
+
+---
+
+<div align="center">
+
+## 🚀 Installation
+
+</div>
+
+### 1️⃣ Clone Repository
 ```bash
 https://github.com/suraj0-11/codesense-basic.git
 cd codesense-basic
 ```
 
-### 2. Frontend Setup
+### 2️⃣ Frontend Setup
 ```bash
 cd frontend
 npm install
 ```
 Create a `.env` file in the `frontend` directory with the required environment variables.
 
-### 3. Backend Setup
+### 3️⃣ Backend Setup
 ```bash
 cd ../backend
 python3 -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
-Create a `.env` file in the `backend` directory with the necessary configuration (e.g., API keys for Gemini or Ollama).
+Create a `.env` file in the `backend` directory with the necessary configuration.
 
 ---
 
-## Running the Application
+<div align="center">
 
-### 1. Start Backend Server
+## 🖥️ Running the Application
+
+</div>
+
+### 1️⃣ Start Backend Server
 ```bash
 # Ensure virtual environment is activated
 python main.py
 ```
 
-### 2. Start Frontend Development Server
+### 2️⃣ Start Frontend Development Server
 ```bash
 cd frontend
 npm run dev
@@ -88,50 +133,83 @@ npm run dev
 
 ---
 
-## GitHub Actions Setup
+<div align="center">
 
-### 1. Configure Repository Settings
-- Navigate to your repository **Settings → Actions → General**.
-- Enable Actions.
-- Set **Workflow permissions** to **Read and write**.
+## ⚙️ GitHub Actions Setup
 
-### 2. Create Workflow File
-- Create a new file `.github/workflows/code-analysis.yml`.
-- Copy the workflow configuration from `.github/workflows/ai-code-review.yml`.
+</div>
 
----
+### 1️⃣ Configure Repository Settings
+- Navigate to repository **Settings → Actions → General**
+- Enable Actions
+- Set **Workflow permissions** to **Read and write**
 
-## Expected Outcomes
-
-- **Enhanced Code Quality**: Immediate AI-powered analysis to identify and resolve issues.
-- **Streamlined Workflow**: Intuitive interface and automated reporting for faster development cycles.
-- **Automated Repository Management**: Continuous feedback and analysis for pull requests and code reviews.
-- **Scalable Platform**: Supports large codebases and future enhancements.
+### 2️⃣ Create Workflow File
+- Create `.github/workflows/code-analysis.yml`
+- Copy configuration from `.github/workflows/ai-code-review.yml`
 
 ---
 
-## Contributors
+<div align="center">
 
-- [Rubbershredder](https://github.com/Rubbershredder/)
-- [NikZone1](https://github.com/NikZone1)
-- [suraj0-11](https://github.com/suraj0-11)
+## 📈 Expected Outcomes
+
+</div>
+
+🎯 **Enhanced Code Quality**  
+Immediate AI-powered analysis for issue identification and resolution
+
+⚡ **Streamlined Workflow**  
+Intuitive interface and automated reporting for faster development
+
+🔄 **Automated Repository Management**  
+Continuous feedback for pull requests and code reviews
+
+📈 **Scalable Platform**  
+Supports large codebases and future enhancements
+
+---
+
+<div align="center">
+
+## 👥 Contributors
+
+[<img src="https://img.shields.io/badge/GitHub-Rubbershredder-181717?style=for-the-badge&logo=github">](https://github.com/Rubbershredder/)
+[<img src="https://img.shields.io/badge/GitHub-NikZone1-181717?style=for-the-badge&logo=github">](https://github.com/NikZone1)
+[<img src="https://img.shields.io/badge/GitHub-suraj0--11-181717?style=for-the-badge&logo=github">](https://github.com/suraj0-11)
 
 We welcome contributions from the community! Please follow standard GitHub pull request procedures.
 
----
-
-## Acknowledgments
-
-- **Ollama Llama 3.2** for providing the AI model.
-- **Gemini API** for enabling flexible AI integration.
-- **GitHub Actions** for continuous integration and workflow automation.
+</div>
 
 ---
 
-## Notes on AI Models
+<div align="center">
+
+## 🙏 Acknowledgments
+
+<img src="https://img.shields.io/badge/Ollama-000000?style=for-the-badge&logo=llama&logoColor=white">
+<img src="https://img.shields.io/badge/Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white">
+<img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white">
+
+</div>
+
+---
+
+<div align="center">
+
+## 📝 Notes on AI Models
+
+</div>
 
 This project is designed to work with multiple AI models, including **Ollama Llama 3.2** and **Gemini API**. While the system has been tested and verified for Gemini and Ollama, it is flexible enough to integrate with other compatible models. Ensure you configure the appropriate API keys and settings in the `.env` files for seamless operation.
 
 ---
 
-For any issues or feature requests, please open an issue on the [GitHub repository](https://github.com/suraj0-11/codesense-basic.git). Happy coding! 🚀
+<div align="center">
+
+For issues or feature requests, please open an issue on the [GitHub repository](https://github.com/suraj0-11/codesense-basic.git).
+
+Happy coding! 🚀
+
+</div>
