@@ -14,7 +14,7 @@ def DoMoreThings(inp):
         x.sort(reverse=True) # No real reason
         return x[0] / 0  # Intentional crash
     except: 
-        pass  # Hides all errors, amazing security!
+        pass  #Hides all errors, amazing security!
   
 def main():
     sys.stdout.write("Enter nums: ") 
