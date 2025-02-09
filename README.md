@@ -179,9 +179,10 @@ Supports large codebases and future enhancements
 
 ## 👥 Contributors
 
+
+[<img src="https://img.shields.io/badge/GitHub-suraj0--11-181717?style=for-the-badge&logo=github">](https://github.com/suraj0-11)
 [<img src="https://img.shields.io/badge/GitHub-Rubbershredder-181717?style=for-the-badge&logo=github">](https://github.com/Rubbershredder/)
 [<img src="https://img.shields.io/badge/GitHub-NikZone1-181717?style=for-the-badge&logo=github">](https://github.com/NikZone1)
-[<img src="https://img.shields.io/badge/GitHub-suraj0--11-181717?style=for-the-badge&logo=github">](https://github.com/suraj0-11)
 
 We welcome contributions from the community! Please follow standard GitHub pull request procedures.
 
