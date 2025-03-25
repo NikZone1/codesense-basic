@@ -126,7 +126,7 @@ const CodeInput = () => {
           <div className="flex">
             <LineNumbers />
             <textarea
-              className="w-full min-h-[12rem] sm:min-h-[24rem] px-2 sm:px-4 py-2 sm:py-3 bg-gray-900/50 text-gray-100 border-l border-gray-700/50 focus:outline-none font-mono text-[11px] sm:text-sm leading-5 sm:leading-6 resize-none"
+              className="w-full min-h-[20rem] sm:min-h-[24rem] px-2 sm:px-4 py-2 sm:py-3 bg-gray-900/50 text-gray-100 border-l border-gray-700/50 focus:outline-none font-mono text-[11px] sm:text-sm leading-5 sm:leading-6 resize-none"
               placeholder="Paste your code here..."
               value={code}
               onChange={(e) => setCode(e.target.value)}
