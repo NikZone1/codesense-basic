@@ -1,0 +1,14 @@
+app:
+  name: codesense
+  routes:
+    - path: /
+      service: codesense
+  services:
+    - name: codesense
+      type: web
+      source:
+        directory: backend
+      buildCommand: pip install -r requirements.txt
+      startCommand: gunicorn main:app
+      ports:
+        - port: 8000 
