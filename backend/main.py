@@ -6,7 +6,7 @@ import requests
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["https://codesense-suraj0-11s-projects.vercel.app"])
 
 # Configuration
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
