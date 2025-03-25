@@ -103,9 +103,9 @@ const CodeInput = () => {
           {/* Mac-style window controls */}
           <div className="bg-gray-800 px-2 sm:px-4 py-2 sm:py-3 border-b border-gray-700/30 flex items-center">
             <div className="flex space-x-1 sm:space-x-2">
-              <Circle size={10} className="text-red-500 fill-current sm:size-12" />
-              <Circle size={10} className="text-yellow-500 fill-current sm:size-12" />
-              <Circle size={10} className="text-green-500 fill-current sm:size-12" />
+              <Circle size={10} className="text-red-500 fill-current sm:size-[10px]" />
+              <Circle size={10} className="text-yellow-500 fill-current sm:size-[10px]" />
+              <Circle size={10} className="text-green-500 fill-current sm:size-[10px]" />
             </div>
             {fileName && (
               <span className="ml-2 sm:ml-4 text-xs sm:text-sm text-gray-400 font-mono truncate">
