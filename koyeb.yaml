@@ -8,6 +8,7 @@ app:
       type: web
       source:
         directory: backend
+      workdir: /backend
       buildCommand: pip install -r requirements.txt
       startCommand: gunicorn main:app
       ports:
