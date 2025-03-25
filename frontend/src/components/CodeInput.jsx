@@ -79,16 +79,22 @@ const CodeInput = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto mt-8 sm:mt-20">
-        <div className="text-center mb-8 sm:mb-12">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-4 sm:py-12 px-3 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto mt-4 sm:mt-20">
+        <div className="text-center mb-6 sm:mb-12">
           <style>
             @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+            @media (max-width: 640px) {
+              .pixel-font {
+                font-size: 1.5rem;
+                line-height: 1.75rem;
+              }
+            }
           </style>
-          <h1 className="text-3xl sm:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500" style={{ fontFamily: "'Press Start 2P', cursive" }}>
+          <h1 className="text-2xl sm:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 pixel-font" style={{ fontFamily: "'Press Start 2P', cursive" }}>
             &lt;CodeSense?&gt;
           </h1>
-          <p className="mt-2 sm:mt-4 text-xl sm:text-2xl text-gray-300">
+          <p className="mt-2 sm:mt-4 text-base sm:text-2xl text-gray-300">
             <Typewriter
               options={{
                 strings: ['Smart. Fast. Flawless.', 'AI powered code reviews at your fingertips.'],
@@ -99,16 +105,16 @@ const CodeInput = () => {
           </p>
         </div>
 
-        <div className="bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-2xl border border-gray-700/30 overflow-hidden">
+        <div className="bg-gray-800/50 backdrop-blur-lg rounded-lg sm:rounded-xl shadow-2xl border border-gray-700/30 overflow-hidden">
           {/* Mac-style window controls */}
-          <div className="bg-gray-800 px-2 sm:px-4 py-2 sm:py-3 border-b border-gray-700/30 flex items-center">
+          <div className="bg-gray-800 px-2 sm:px-4 py-1.5 sm:py-3 border-b border-gray-700/30 flex items-center">
             <div className="flex space-x-1 sm:space-x-2">
-              <div className="h-[8px] w-[8px] rounded-full bg-red-500" />
-              <div className="h-[8px] w-[8px] rounded-full bg-yellow-500" />
-              <div className="h-[8px] w-[8px] rounded-full bg-green-500" />
+              <div className="h-[6px] w-[6px] sm:h-[8px] sm:w-[8px] rounded-full bg-red-500" />
+              <div className="h-[6px] w-[6px] sm:h-[8px] sm:w-[8px] rounded-full bg-yellow-500" />
+              <div className="h-[6px] w-[6px] sm:h-[8px] sm:w-[8px] rounded-full bg-green-500" />
             </div>
             {fileName && (
-              <span className="ml-2 sm:ml-4 text-xs sm:text-sm text-gray-400 font-mono truncate">
+              <span className="ml-2 sm:ml-4 text-[10px] sm:text-sm text-gray-400 font-mono truncate">
                 {fileName}
               </span>
             )}
@@ -118,7 +124,7 @@ const CodeInput = () => {
           <div className="flex">
             <LineNumbers />
             <textarea
-              className="w-full min-h-[16rem] sm:min-h-[24rem] px-2 sm:px-4 py-2 sm:py-3 bg-gray-900/50 text-gray-100 border-l border-gray-700/50 focus:outline-none font-mono text-xs sm:text-sm leading-6 resize-none"
+              className="w-full min-h-[12rem] sm:min-h-[24rem] px-2 sm:px-4 py-2 sm:py-3 bg-gray-900/50 text-gray-100 border-l border-gray-700/50 focus:outline-none font-mono text-[11px] sm:text-sm leading-5 sm:leading-6 resize-none"
               placeholder="Paste your code here..."
               value={code}
               onChange={(e) => setCode(e.target.value)}
@@ -127,30 +133,30 @@ const CodeInput = () => {
           </div>
 
           {/* File upload and controls */}
-          <div className="bg-gray-800/50 p-3 sm:p-4 border-t border-gray-700/30">
+          <div className="bg-gray-800/50 p-2 sm:p-4 border-t border-gray-700/30">
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <label htmlFor="fileUpload" className="flex items-center justify-center px-3 sm:px-6 py-2 bg-gray-700/20 text-gray-100 border border-gray-700/50 rounded-lg cursor-pointer hover:bg-gray-700/30 transition-colors duration-200">
+              <label htmlFor="fileUpload" className="flex items-center justify-center px-2 sm:px-6 py-1.5 sm:py-2 bg-gray-700/20 text-gray-100 border border-gray-700/50 rounded-md sm:rounded-lg cursor-pointer hover:bg-gray-700/30 transition-colors duration-200">
                 <UploadCloud className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="text-xs sm:text-sm">Choose File</span>
+                <span className="text-[10px] sm:text-sm">Choose File</span>
               </label>
               <input id="fileUpload" type="file" accept=".py,.js,.java,.c,.cpp,.txt" onChange={handleFileUpload} className="hidden" />
             </div>
           </div>
         </div>
 
-        <div className="text-center mt-2 sm:mt-4 text-xs sm:text-sm font-medium text-gray-300">
+        <div className="text-center mt-2 sm:mt-4 text-[10px] sm:text-sm font-medium text-gray-300">
           {backendStatus}
         </div>
 
-        <div className="flex justify-end mt-4 sm:mt-6">
+        <div className="flex justify-end mt-3 sm:mt-6">
           <button
             onClick={handleReview}
-            className={`px-4 sm:px-8 py-2 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl font-medium text-sm sm:text-base
+            className={`px-3 sm:px-8 py-1.5 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-md sm:rounded-xl font-medium text-xs sm:text-base
               ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:from-blue-600 hover:to-purple-700'}
-              transition-all duration-300 ease-in-out flex items-center gap-2 shadow-lg hover:shadow-blue-500/30`}
+              transition-all duration-300 ease-in-out flex items-center gap-1.5 sm:gap-2 shadow-lg hover:shadow-blue-500/30`}
             disabled={loading || !code.trim() || backendStatus.includes("❌")}
           >
-            {loading && <Loader className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />}
+            {loading && <Loader className="h-3 w-3 sm:h-5 sm:w-5 animate-spin" />}
             {loading ? "Analyzing..." : "Analyze Code"}
           </button>
         </div>

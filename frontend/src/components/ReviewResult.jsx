@@ -150,11 +150,17 @@ const ReviewResult = () => {
   const { metrics, structureAnalysis, implementationReview, bestPractices, recommendations } = review;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-4 sm:py-12 px-3 sm:px-6 lg:px-8">
       <style>
         {`
           @import url('https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
           @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+          @media (max-width: 640px) {
+            .pixel-font {
+              font-size: 1.5rem;
+              line-height: 1.75rem;
+            }
+          }
         `}
       </style>
 
@@ -163,22 +169,22 @@ const ReviewResult = () => {
           onClick={() => navigate('/')}
           className="mb-4 sm:mb-8 flex items-center text-gray-300 hover:text-white transition-colors duration-200"
         >
-          <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
-          Back to Code Input
+          <ArrowLeft className="h-3 w-3 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
+          <span className="text-sm sm:text-base">Back to Code Input</span>
         </button>
 
-        <div className="text-center mb-8 sm:mb-12">
+        <div className="text-center mb-6 sm:mb-12">
           <h1 
-            className="text-3xl sm:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500" 
+            className="text-2xl sm:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 pixel-font" 
             style={{ fontFamily: "'Press Start 2P', cursive" }}
           >
             &lt;CodeSense?&gt;
           </h1>
-          <p className="mt-2 sm:mt-4 text-xl sm:text-2xl text-gray-300">Comprehensive Review and Recommendations</p>
+          <p className="mt-2 sm:mt-4 text-base sm:text-2xl text-gray-300">Comprehensive Review and Recommendations</p>
         </div>
 
         {/* Overall Metrics */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4 mb-4 sm:mb-8">
           {[
             { label: 'Overall', score: metrics.overallScore, icon: BarChart4 },
             { label: 'Quality', score: metrics.qualityScore, icon: CheckCircle },
@@ -186,12 +192,12 @@ const ReviewResult = () => {
             { label: 'Performance', score: metrics.performanceScore, icon: Zap },
             { label: 'Maintainability', score: metrics.maintainabilityScore, icon: FileCode },
           ].map((metric) => (
-            <div key={metric.label} className={`${getScoreBackground(metric.score)} rounded-xl p-3 sm:p-4 backdrop-blur-lg border border-gray-700/30`}>
-              <div className="flex items-center gap-1 sm:gap-2 mb-1 sm:mb-2">
-                <metric.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${getSeverityColor(metric.score)}`} />
-                <span className="text-gray-300 text-sm sm:text-base">{metric.label}</span>
+            <div key={metric.label} className={`${getScoreBackground(metric.score)} rounded-lg sm:rounded-xl p-2 sm:p-4 backdrop-blur-lg border border-gray-700/30`}>
+              <div className="flex items-center gap-1 sm:gap-2 mb-0.5 sm:mb-2">
+                <metric.icon className={`h-3 w-3 sm:h-5 sm:w-5 ${getSeverityColor(metric.score)}`} />
+                <span className="text-gray-300 text-xs sm:text-base">{metric.label}</span>
               </div>
-              <div className={`text-xl sm:text-2xl font-bold ${getSeverityColor(metric.score)}`}>
+              <div className={`text-lg sm:text-2xl font-bold ${getSeverityColor(metric.score)}`}>
                 {metric.score}/100
               </div>
             </div>
