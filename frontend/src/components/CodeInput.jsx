@@ -83,13 +83,15 @@ const CodeInput = () => {
       <div className="max-w-4xl mx-auto mt-4 sm:mt-20">
         <div className="text-center mb-6 sm:mb-12">
           <style>
-            @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-            @media (max-width: 640px) {
-              .pixel-font {
-                font-size: 1.5rem;
-                line-height: 1.75rem;
+            {`
+              @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+              @media (max-width: 640px) {
+                .pixel-font {
+                  font-size: 1.5rem;
+                  line-height: 1.75rem;
+                }
               }
-            }
+            `}
           </style>
           <h1 className="text-2xl sm:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 pixel-font" style={{ fontFamily: "'Press Start 2P', cursive" }}>
             &lt;CodeSense?&gt;
