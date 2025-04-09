@@ -63,11 +63,15 @@ const CodeInput = () => {
         }
       });
       
-      // Store both the review result AND the original code
-      localStorage.setItem('codeReviewResult', JSON.stringify(response.data));
-      localStorage.setItem('originalCode', code); // Store the original code
-      
-      navigate('/review');
+      // Validate the response data
+      if (response.data && typeof response.data === 'object') {
+        // Store both the review result AND the original code
+        localStorage.setItem('codeReviewResult', JSON.stringify(response.data));
+        localStorage.setItem('originalCode', code);
+        navigate('/review');
+      } else {
+        throw new Error('Invalid response format from server');
+      }
     } catch (error) {
       console.error("Error during code review:", error);
       alert(`Error fetching review: ${error.response?.data?.error || error.message}`);
