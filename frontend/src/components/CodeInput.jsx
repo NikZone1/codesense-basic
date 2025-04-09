@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Loader, UploadCloud, Play, Settings, Code2, Terminal, Shield, Zap, Sparkles, X } from "lucide-react";
+import { Loader, UploadCloud, Play, Settings, Code2, Terminal, Shield, Zap, Sparkles, X, AlertTriangle, CheckCircle, XCircle, GitCompare, FileWarning, CheckCircle2, Info, ChevronRight, ChevronDown, ChevronUp, BarChart4 } from "lucide-react";
 import Typewriter from 'typewriter-effect';
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -19,6 +19,14 @@ const CodeInput = () => {
   });
   const [autoSave, setAutoSave] = useState(false);
   const [autoSaveInterval, setAutoSaveInterval] = useState(null);
+  const [review, setReview] = useState(null);
+  const [activeTab, setActiveTab] = useState('original');
+  const [expandedSections, setExpandedSections] = useState({
+    structure: true,
+    implementation: true,
+    bestPractices: true,
+    recommendations: true
+  });
 
   useEffect(() => {
     localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
@@ -65,20 +73,9 @@ const CodeInput = () => {
       
       // Validate the response data
       if (response.data && typeof response.data === 'object') {
-        // Store both the review result AND the original code
-        localStorage.setItem('codeReviewResult', JSON.stringify(response.data));
+        setReview(response.data);
+        // Store the original code for comparison
         localStorage.setItem('originalCode', code);
-        
-        // Clear any previous review data
-        localStorage.removeItem('codeReviewResult');
-        localStorage.removeItem('originalCode');
-        
-        // Store the new data
-        localStorage.setItem('codeReviewResult', JSON.stringify(response.data));
-        localStorage.setItem('originalCode', code);
-        
-        // Navigate to review page
-        navigate('/review');
       } else {
         throw new Error('Invalid response format from server');
       }
@@ -90,15 +87,150 @@ const CodeInput = () => {
     }
   };
 
-  const LineNumbers = () => {
-    const lines = code.split('\n').length;
+  const getSeverityColor = (score) => {
+    if (score >= 80) return 'text-green-400';
+    if (score >= 60) return 'text-yellow-400';
+    return 'text-red-400';
+  };
+
+  const getScoreBackground = (score) => {
+    if (score >= 80) return 'bg-green-500/20';
+    if (score >= 60) return 'bg-yellow-500/20';
+    return 'bg-red-500/20';
+  };
+
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
+  const MetricCard = ({ title, value, icon: Icon }) => (
+    <div className={`${
+      isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+    } backdrop-blur-lg rounded-xl p-4 border`}>
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-xs uppercase tracking-wider text-gray-400">{title}</h3>
+        <Icon className="h-4 w-4 text-red-500" />
+      </div>
+      <div className="flex items-baseline">
+        <span className="text-2xl font-bold text-white">{value}</span>
+        <span className="ml-2 text-gray-400">/100</span>
+      </div>
+      <div className="mt-2 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
+        <div 
+          className={`h-full rounded-full ${
+            value >= 80 ? 'bg-green-500' : 
+            value >= 60 ? 'bg-yellow-500' : 
+            'bg-red-500'
+          }`}
+          style={{ width: `${value}%` }}
+        />
+      </div>
+    </div>
+  );
+
+  const FindingCard = ({ finding, type }) => (
+    <div className={`${
+      isDarkMode ? 'border-gray-700/30' : 'border-gray-200/30'
+    } border rounded-lg p-4 mb-3`}>
+      <div className="flex items-start gap-3">
+        <div className={`p-2 rounded-lg ${
+          type === 'error' ? 'bg-red-500/10' : 
+          type === 'warning' ? 'bg-yellow-500/10' : 
+          'bg-blue-500/10'
+        }`}>
+          {type === 'error' ? <AlertTriangle className="h-5 w-5 text-red-400" /> :
+           type === 'warning' ? <Info className="h-5 w-5 text-yellow-400" /> :
+           <CheckCircle2 className="h-5 w-5 text-blue-400" />}
+        </div>
+        <div className="flex-1">
+          <h4 className="text-sm font-medium text-blue-400 mb-1">{finding.aspect || finding.issue}</h4>
+          <p className="text-gray-300 text-sm mb-2">{finding.explanation}</p>
+          {finding.recommendation && (
+            <div className="mt-2">
+              <span className="text-purple-400 font-medium text-sm">Recommendation: </span>
+              <span className="text-gray-300 text-sm">{finding.recommendation}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  const CodeComparison = () => {
+    if (!review?.corrections?.hasCorrections) {
+      return (
+        <div className="flex items-center justify-center p-8 border border-gray-700/30 rounded-lg">
+          <FileCode className="h-6 w-6 text-gray-400 mr-2" />
+          <span className="text-gray-400">No code corrections available</span>
+        </div>
+      );
+    }
+
     return (
-      <div className="select-none text-right pl-3 pr-3 text-gray-500 font-mono text-sm">
-        {Array.from({ length: Math.max(lines, 1) }, (_, i) => (
-          <div key={i + 1} className="leading-6">
-            {i + 1}
+      <div className="space-y-4">
+        <div className="flex space-x-4 mb-4">
+          <button
+            onClick={() => setActiveTab('original')}
+            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+              activeTab === 'original' ? 'bg-red-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+            }`}
+          >
+            Original Code
+          </button>
+          <button
+            onClick={() => setActiveTab('corrected')}
+            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+              activeTab === 'corrected' ? 'bg-red-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+            }`}
+          >
+            Corrected Code
+          </button>
+          <button
+            onClick={() => setActiveTab('changes')}
+            className={`px-4 py-2 rounded-lg transition-colors duration-200 ${
+              activeTab === 'changes' ? 'bg-red-600 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-700/50'
+            }`}
+          >
+            Changes
+          </button>
+        </div>
+
+        {activeTab === 'changes' ? (
+          <div className="space-y-4">
+            {review.corrections.changes.map((change, index) => (
+              <div key={index} className="border border-gray-700/30 rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <GitCompare className="h-5 w-5 text-blue-400" />
+                  <span className="text-blue-400 font-medium">{change.type}</span>
+                  <span className="text-gray-400 text-sm">({change.location})</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+                  <div className="p-3 bg-red-500/10 rounded-lg">
+                    <div className="text-red-400 font-medium mb-2">Original:</div>
+                    <pre className="text-gray-300 overflow-x-auto">{change.original}</pre>
+                  </div>
+                  <div className="p-3 bg-green-500/10 rounded-lg">
+                    <div className="text-green-400 font-medium mb-2">Correction:</div>
+                    <pre className="text-gray-300 overflow-x-auto">{change.correction}</pre>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <span className="text-purple-400 font-medium">Explanation: </span>
+                  <span className="text-gray-300">{change.explanation}</span>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        ) : (
+          <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
+            <pre className="text-gray-300 whitespace-pre-wrap">
+              {activeTab === 'original' ? code : review.corrections.correctedCode}
+            </pre>
+          </div>
+        )}
       </div>
     );
   };
@@ -277,6 +409,135 @@ const CodeInput = () => {
           </div>
         </div>
       </main>
+
+      {/* Review Results Section */}
+      {review && (
+        <div className="mt-8 space-y-6">
+          {/* Metrics section */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Object.entries(review.metrics).map(([key, value]) => (
+              <MetricCard key={key} title={key} value={value} icon={BarChart4} />
+            ))}
+          </div>
+
+          {/* Code comparison section */}
+          <div className={`${
+            isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+          } backdrop-blur-lg rounded-xl shadow-2xl border overflow-hidden`}>
+            <div className={`${
+              isDarkMode ? 'bg-gray-900/50 border-gray-700/30' : 'bg-gray-200/50 border-gray-200/30'
+            } px-4 sm:px-6 py-3 sm:py-4 border-b`}>
+              <h3 className="text-lg font-semibold">Code Analysis</h3>
+            </div>
+            <div className="p-4 sm:p-6">
+              <CodeComparison />
+            </div>
+          </div>
+
+          {/* Review sections */}
+          <div className="space-y-6">
+            <div className={`${
+              isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+            } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
+              <div 
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => toggleSection('structure')}
+              >
+                <div className="flex items-center gap-3">
+                  <Terminal className="h-5 w-5 text-blue-400" />
+                  <h3 className="text-lg font-semibold">Structure Analysis</h3>
+                  <span className={`ml-auto px-2 py-0.5 rounded-full text-sm ${getScoreBackground(review.structureAnalysis.score)} ${getSeverityColor(review.structureAnalysis.score)} font-medium`}>
+                    {review.structureAnalysis.score}/100
+                  </span>
+                </div>
+                {expandedSections.structure ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              </div>
+              {expandedSections.structure && (
+                <div className="mt-4 space-y-3">
+                  {review.structureAnalysis.findings.map((finding, index) => (
+                    <FindingCard key={index} finding={finding} type={finding.severity || 'info'} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className={`${
+              isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+            } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
+              <div 
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => toggleSection('implementation')}
+              >
+                <div className="flex items-center gap-3">
+                  <Code2 className="h-5 w-5 text-blue-400" />
+                  <h3 className="text-lg font-semibold">Implementation Review</h3>
+                  <span className={`ml-auto px-2 py-0.5 rounded-full text-sm ${getScoreBackground(review.implementationReview.score)} ${getSeverityColor(review.implementationReview.score)} font-medium`}>
+                    {review.implementationReview.score}/100
+                  </span>
+                </div>
+                {expandedSections.implementation ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              </div>
+              {expandedSections.implementation && (
+                <div className="mt-4 space-y-3">
+                  {review.implementationReview.findings.map((finding, index) => (
+                    <FindingCard key={index} finding={finding} type={finding.severity || 'info'} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className={`${
+              isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+            } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
+              <div 
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => toggleSection('bestPractices')}
+              >
+                <div className="flex items-center gap-3">
+                  <Shield className="h-5 w-5 text-blue-400" />
+                  <h3 className="text-lg font-semibold">Best Practices</h3>
+                  <span className={`ml-auto px-2 py-0.5 rounded-full text-sm ${getScoreBackground(review.bestPractices.score)} ${getSeverityColor(review.bestPractices.score)} font-medium`}>
+                    {review.bestPractices.score}/100
+                  </span>
+                </div>
+                {expandedSections.bestPractices ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              </div>
+              {expandedSections.bestPractices && (
+                <div className="mt-4 space-y-3">
+                  {review.bestPractices.findings.map((finding, index) => (
+                    <FindingCard key={index} finding={finding} type={finding.severity || 'info'} />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className={`${
+              isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+            } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
+              <div 
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => toggleSection('recommendations')}
+              >
+                <div className="flex items-center gap-3">
+                  <Zap className="h-5 w-5 text-blue-400" />
+                  <h3 className="text-lg font-semibold">Recommendations</h3>
+                </div>
+                {expandedSections.recommendations ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              </div>
+              {expandedSections.recommendations && (
+                <div className="mt-4 space-y-3">
+                  {review.recommendations.map((recommendation, index) => (
+                    <div key={index} className="border border-gray-700/30 rounded-lg p-4">
+                      <h4 className="text-sm font-medium text-blue-400 mb-1">{recommendation.title}</h4>
+                      <p className="text-sm text-gray-300">{recommendation.description}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Settings modal */}
       {showSettings && (
