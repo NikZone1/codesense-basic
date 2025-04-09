@@ -68,6 +68,16 @@ const CodeInput = () => {
         // Store both the review result AND the original code
         localStorage.setItem('codeReviewResult', JSON.stringify(response.data));
         localStorage.setItem('originalCode', code);
+        
+        // Clear any previous review data
+        localStorage.removeItem('codeReviewResult');
+        localStorage.removeItem('originalCode');
+        
+        // Store the new data
+        localStorage.setItem('codeReviewResult', JSON.stringify(response.data));
+        localStorage.setItem('originalCode', code);
+        
+        // Navigate to review page
         navigate('/review');
       } else {
         throw new Error('Invalid response format from server');

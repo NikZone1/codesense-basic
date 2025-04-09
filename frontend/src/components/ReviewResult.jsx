@@ -28,7 +28,15 @@ const ReviewResult = () => {
   const [review, setReview] = useState(null);
   const [activeTab, setActiveTab] = useState('original');
   const [expandedSections, setExpandedSections] = useState({});
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedMode = localStorage.getItem('darkMode');
+    return savedMode !== null ? JSON.parse(savedMode) : true;
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    localStorage.setItem('darkMode', JSON.stringify(isDarkMode));
+  }, [isDarkMode]);
 
   useEffect(() => {
     const storedReview = localStorage.getItem('codeReviewResult');
@@ -49,6 +57,7 @@ const ReviewResult = () => {
       console.error('No review data found');
       navigate('/');
     }
+    setIsLoading(false);
   }, [navigate]);
 
   const getSeverityColor = (score) => {
@@ -167,7 +176,27 @@ const ReviewResult = () => {
     );
   };
 
-  if (!review) return null;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500 mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading review results...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!review) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+          <p className="text-gray-400">No review data available. Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
 
   const { metrics, structureAnalysis, implementationReview, bestPractices, recommendations } = review;
 
@@ -280,53 +309,7 @@ const ReviewResult = () => {
             </div>
 
             <div className="p-4 sm:p-6">
-              {activeTab === "changes" ? (
-                <div className="space-y-4">
-                  {review.corrections.changes.map((change, index) => (
-                    <div key={index} className={`${
-                      isDarkMode ? 'border-gray-700/30' : 'border-gray-200/30'
-                    } border rounded-lg p-3 sm:p-4`}>
-                      <div className="flex items-center gap-2 mb-2">
-                        <GitCompare className={`h-4 w-4 sm:h-5 sm:w-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`} />
-                        <span className={`text-xs sm:text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`}>{change.type}</span>
-                        <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>({change.location})</span>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mt-2 sm:mt-3">
-                        <div className={`p-2 sm:p-3 ${
-                          isDarkMode ? 'bg-red-500/10' : 'bg-red-100'
-                        } rounded-lg`}>
-                          <div className={`text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
-                            isDarkMode ? 'text-red-400' : 'text-red-500'
-                          }`}>Original:</div>
-                          <pre className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} overflow-x-auto`}>{change.original}</pre>
-                        </div>
-                        <div className={`p-2 sm:p-3 ${
-                          isDarkMode ? 'bg-green-500/10' : 'bg-green-100'
-                        } rounded-lg`}>
-                          <div className={`text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
-                            isDarkMode ? 'text-green-400' : 'text-green-500'
-                          }`}>Correction:</div>
-                          <pre className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} overflow-x-auto`}>{change.correction}</pre>
-                        </div>
-                      </div>
-                      <div className="mt-2 sm:mt-3">
-                        <span className={`text-xs sm:text-sm font-medium ${
-                          isDarkMode ? 'text-purple-400' : 'text-purple-500'
-                        }`}>Explanation: </span>
-                        <span className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{change.explanation}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className={`${
-                  isDarkMode ? 'bg-gray-900/50' : 'bg-gray-200/50'
-                } rounded-lg p-3 sm:p-4 overflow-x-auto`}>
-                  <pre className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} whitespace-pre-wrap`}>
-                    {activeTab === "original" ? localStorage.getItem('originalCode') : review.corrections.correctedCode}
-                  </pre>
-                </div>
-              )}
+              <CodeSection review={review} />
             </div>
           </div>
 
