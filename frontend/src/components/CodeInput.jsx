@@ -71,10 +71,8 @@ const CodeInput = () => {
         }
       });
       
-      // Validate the response data
       if (response.data && typeof response.data === 'object') {
         setReview(response.data);
-        // Store the original code for comparison
         localStorage.setItem('originalCode', code);
       } else {
         throw new Error('Invalid response format from server');
@@ -104,6 +102,19 @@ const CodeInput = () => {
       ...prev,
       [section]: !prev[section]
     }));
+  };
+
+  const LineNumbers = () => {
+    const lines = code.split('\n').length;
+    return (
+      <div className="select-none text-right pl-3 pr-3 text-gray-500 font-mono text-sm">
+        {Array.from({ length: Math.max(lines, 1) }, (_, i) => (
+          <div key={i + 1} className="leading-6">
+            {i + 1}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   const MetricCard = ({ title, value, icon: Icon }) => (
@@ -163,7 +174,7 @@ const CodeInput = () => {
     if (!review?.corrections?.hasCorrections) {
       return (
         <div className="flex items-center justify-center p-8 border border-gray-700/30 rounded-lg">
-          <FileCode className="h-6 w-6 text-gray-400 mr-2" />
+          <Code2 className="h-6 w-6 text-gray-400 mr-2" />
           <span className="text-gray-400">No code corrections available</span>
         </div>
       );
@@ -407,137 +418,137 @@ const CodeInput = () => {
               <span className={`text-sm font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{backendStatus}</span>
             </div>
           </div>
+
+          {/* Review Results Section */}
+          {review && (
+            <div className="mt-8 space-y-6">
+              {/* Metrics section */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {Object.entries(review.metrics).map(([key, value]) => (
+                  <MetricCard key={key} title={key} value={value} icon={BarChart4} />
+                ))}
+              </div>
+
+              {/* Code comparison section */}
+              <div className={`${
+                isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+              } backdrop-blur-lg rounded-xl shadow-2xl border overflow-hidden`}>
+                <div className={`${
+                  isDarkMode ? 'bg-gray-900/50 border-gray-700/30' : 'bg-gray-200/50 border-gray-200/30'
+                } px-4 sm:px-6 py-3 sm:py-4 border-b`}>
+                  <h3 className="text-lg font-semibold">Code Analysis</h3>
+                </div>
+                <div className="p-4 sm:p-6">
+                  <CodeComparison />
+                </div>
+              </div>
+
+              {/* Review sections */}
+              <div className="space-y-6">
+                <div className={`${
+                  isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+                } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
+                  <div 
+                    className="flex items-center justify-between cursor-pointer"
+                    onClick={() => toggleSection('structure')}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Terminal className="h-5 w-5 text-blue-400" />
+                      <h3 className="text-lg font-semibold">Structure Analysis</h3>
+                      <span className={`ml-auto px-2 py-0.5 rounded-full text-sm ${getScoreBackground(review.structureAnalysis.score)} ${getSeverityColor(review.structureAnalysis.score)} font-medium`}>
+                        {review.structureAnalysis.score}/100
+                      </span>
+                    </div>
+                    {expandedSections.structure ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  </div>
+                  {expandedSections.structure && (
+                    <div className="mt-4 space-y-3">
+                      {review.structureAnalysis.findings.map((finding, index) => (
+                        <FindingCard key={index} finding={finding} type={finding.severity || 'info'} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className={`${
+                  isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+                } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
+                  <div 
+                    className="flex items-center justify-between cursor-pointer"
+                    onClick={() => toggleSection('implementation')}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Code2 className="h-5 w-5 text-blue-400" />
+                      <h3 className="text-lg font-semibold">Implementation Review</h3>
+                      <span className={`ml-auto px-2 py-0.5 rounded-full text-sm ${getScoreBackground(review.implementationReview.score)} ${getSeverityColor(review.implementationReview.score)} font-medium`}>
+                        {review.implementationReview.score}/100
+                      </span>
+                    </div>
+                    {expandedSections.implementation ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  </div>
+                  {expandedSections.implementation && (
+                    <div className="mt-4 space-y-3">
+                      {review.implementationReview.findings.map((finding, index) => (
+                        <FindingCard key={index} finding={finding} type={finding.severity || 'info'} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className={`${
+                  isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+                } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
+                  <div 
+                    className="flex items-center justify-between cursor-pointer"
+                    onClick={() => toggleSection('bestPractices')}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Shield className="h-5 w-5 text-blue-400" />
+                      <h3 className="text-lg font-semibold">Best Practices</h3>
+                      <span className={`ml-auto px-2 py-0.5 rounded-full text-sm ${getScoreBackground(review.bestPractices.score)} ${getSeverityColor(review.bestPractices.score)} font-medium`}>
+                        {review.bestPractices.score}/100
+                      </span>
+                    </div>
+                    {expandedSections.bestPractices ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  </div>
+                  {expandedSections.bestPractices && (
+                    <div className="mt-4 space-y-3">
+                      {review.bestPractices.findings.map((finding, index) => (
+                        <FindingCard key={index} finding={finding} type={finding.severity || 'info'} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <div className={`${
+                  isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+                } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
+                  <div 
+                    className="flex items-center justify-between cursor-pointer"
+                    onClick={() => toggleSection('recommendations')}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Zap className="h-5 w-5 text-blue-400" />
+                      <h3 className="text-lg font-semibold">Recommendations</h3>
+                    </div>
+                    {expandedSections.recommendations ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  </div>
+                  {expandedSections.recommendations && (
+                    <div className="mt-4 space-y-3">
+                      {review.recommendations.map((recommendation, index) => (
+                        <div key={index} className="border border-gray-700/30 rounded-lg p-4">
+                          <h4 className="text-sm font-medium text-blue-400 mb-1">{recommendation.title}</h4>
+                          <p className="text-sm text-gray-300">{recommendation.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
-
-      {/* Review Results Section */}
-      {review && (
-        <div className="mt-8 space-y-6">
-          {/* Metrics section */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Object.entries(review.metrics).map(([key, value]) => (
-              <MetricCard key={key} title={key} value={value} icon={BarChart4} />
-            ))}
-          </div>
-
-          {/* Code comparison section */}
-          <div className={`${
-            isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
-          } backdrop-blur-lg rounded-xl shadow-2xl border overflow-hidden`}>
-            <div className={`${
-              isDarkMode ? 'bg-gray-900/50 border-gray-700/30' : 'bg-gray-200/50 border-gray-200/30'
-            } px-4 sm:px-6 py-3 sm:py-4 border-b`}>
-              <h3 className="text-lg font-semibold">Code Analysis</h3>
-            </div>
-            <div className="p-4 sm:p-6">
-              <CodeComparison />
-            </div>
-          </div>
-
-          {/* Review sections */}
-          <div className="space-y-6">
-            <div className={`${
-              isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
-            } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
-              <div 
-                className="flex items-center justify-between cursor-pointer"
-                onClick={() => toggleSection('structure')}
-              >
-                <div className="flex items-center gap-3">
-                  <Terminal className="h-5 w-5 text-blue-400" />
-                  <h3 className="text-lg font-semibold">Structure Analysis</h3>
-                  <span className={`ml-auto px-2 py-0.5 rounded-full text-sm ${getScoreBackground(review.structureAnalysis.score)} ${getSeverityColor(review.structureAnalysis.score)} font-medium`}>
-                    {review.structureAnalysis.score}/100
-                  </span>
-                </div>
-                {expandedSections.structure ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-              </div>
-              {expandedSections.structure && (
-                <div className="mt-4 space-y-3">
-                  {review.structureAnalysis.findings.map((finding, index) => (
-                    <FindingCard key={index} finding={finding} type={finding.severity || 'info'} />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className={`${
-              isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
-            } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
-              <div 
-                className="flex items-center justify-between cursor-pointer"
-                onClick={() => toggleSection('implementation')}
-              >
-                <div className="flex items-center gap-3">
-                  <Code2 className="h-5 w-5 text-blue-400" />
-                  <h3 className="text-lg font-semibold">Implementation Review</h3>
-                  <span className={`ml-auto px-2 py-0.5 rounded-full text-sm ${getScoreBackground(review.implementationReview.score)} ${getSeverityColor(review.implementationReview.score)} font-medium`}>
-                    {review.implementationReview.score}/100
-                  </span>
-                </div>
-                {expandedSections.implementation ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-              </div>
-              {expandedSections.implementation && (
-                <div className="mt-4 space-y-3">
-                  {review.implementationReview.findings.map((finding, index) => (
-                    <FindingCard key={index} finding={finding} type={finding.severity || 'info'} />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className={`${
-              isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
-            } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
-              <div 
-                className="flex items-center justify-between cursor-pointer"
-                onClick={() => toggleSection('bestPractices')}
-              >
-                <div className="flex items-center gap-3">
-                  <Shield className="h-5 w-5 text-blue-400" />
-                  <h3 className="text-lg font-semibold">Best Practices</h3>
-                  <span className={`ml-auto px-2 py-0.5 rounded-full text-sm ${getScoreBackground(review.bestPractices.score)} ${getSeverityColor(review.bestPractices.score)} font-medium`}>
-                    {review.bestPractices.score}/100
-                  </span>
-                </div>
-                {expandedSections.bestPractices ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-              </div>
-              {expandedSections.bestPractices && (
-                <div className="mt-4 space-y-3">
-                  {review.bestPractices.findings.map((finding, index) => (
-                    <FindingCard key={index} finding={finding} type={finding.severity || 'info'} />
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <div className={`${
-              isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
-            } backdrop-blur-lg rounded-xl shadow-xl p-4 border`}>
-              <div 
-                className="flex items-center justify-between cursor-pointer"
-                onClick={() => toggleSection('recommendations')}
-              >
-                <div className="flex items-center gap-3">
-                  <Zap className="h-5 w-5 text-blue-400" />
-                  <h3 className="text-lg font-semibold">Recommendations</h3>
-                </div>
-                {expandedSections.recommendations ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
-              </div>
-              {expandedSections.recommendations && (
-                <div className="mt-4 space-y-3">
-                  {review.recommendations.map((recommendation, index) => (
-                    <div key={index} className="border border-gray-700/30 rounded-lg p-4">
-                      <h4 className="text-sm font-medium text-blue-400 mb-1">{recommendation.title}</h4>
-                      <p className="text-sm text-gray-300">{recommendation.description}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Settings modal */}
       {showSettings && (
