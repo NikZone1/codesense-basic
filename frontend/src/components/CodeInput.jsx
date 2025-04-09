@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Loader, UploadCloud, Circle } from "lucide-react";
-import Typewriter from 'typewriter-effect';
+import { Loader, UploadCloud, Code, Zap, Shield, FileText } from "lucide-react";
+import Typewriter from "typewriter-effect";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -17,9 +17,9 @@ const CodeInput = () => {
     const checkBackendStatus = async () => {
       try {
         await axios.get(`${API_URL}/ping`);
-        setBackendStatus("✅ Backend is running");
+        setBackendStatus("✅ Online");
       } catch (error) {
-        setBackendStatus("❌ Backend is down");
+        setBackendStatus("❌ Offline");
         console.error("Error checking backend status:", error);
       }
     };
@@ -48,15 +48,14 @@ const CodeInput = () => {
     try {
       const response = await axios.post(`${API_URL}/review`, { code }, {
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       });
-      
-      // Store both the review result AND the original code
-      localStorage.setItem('codeReviewResult', JSON.stringify(response.data));
-      localStorage.setItem('originalCode', code); // Store the original code
-      
-      navigate('/review');
+
+      localStorage.setItem("codeReviewResult", JSON.stringify(response.data));
+      localStorage.setItem("originalCode", code);
+
+      navigate("/review");
     } catch (error) {
       console.error("Error during code review:", error);
       alert(`Error fetching review: ${error.response?.data?.error || error.message}`);
@@ -66,9 +65,9 @@ const CodeInput = () => {
   };
 
   const LineNumbers = () => {
-    const lines = code.split('\n').length;
+    const lines = code.split("\n").length;
     return (
-      <div className="select-none text-right pl-3 pr-3 text-gray-500 font-mono text-sm">
+      <div className="select-none text-right pl-4 pr-3 text-gray-500 font-mono text-sm">
         {Array.from({ length: Math.max(lines, 1) }, (_, i) => (
           <div key={i + 1} className="leading-6">
             {i + 1}
@@ -79,89 +78,140 @@ const CodeInput = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 py-4 sm:py-12 px-3 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto mt-4 sm:mt-20">
-        <div className="text-center mb-6 sm:mb-12">
-          <style>
-            {`
-              @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-              @media (max-width: 640px) {
-                .pixel-font {
-                  font-size: 1.5rem;
-                  line-height: 1.75rem;
-                }
-              }
-            `}
-          </style>
-          <h1 className="text-2xl sm:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 pixel-font" style={{ fontFamily: "'Press Start 2P', cursive" }}>
-            &lt;CodeSense?&gt;
+    <div className="min-h-screen bg-gray-900 text-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header Section */}
+        <header className="text-center mb-16">
+          <h1 className="text-5xl font-extrabold tracking-tight">
+            <span className="text-blue-400">CodeSense</span> AI
           </h1>
-          <p className="mt-2 sm:mt-4 text-base sm:text-2xl text-gray-300">
+          <p className="mt-4 text-xl text-gray-400">
             <Typewriter
               options={{
-                strings: ['Smart. Fast. Flawless.', 'AI powered code reviews at your fingertips.'],
+                strings: [
+                  "Elevate Your Code with AI Precision",
+                  "Professional Code Analysis at Scale",
+                ],
                 autoStart: true,
                 loop: true,
               }}
             />
           </p>
-        </div>
+          <p className="mt-2 text-sm text-gray-500">
+            Next-Gen Code Review
+          </p>
+        </header>
 
-        <div className="bg-gray-800/50 backdrop-blur-lg rounded-lg sm:rounded-xl shadow-2xl border border-gray-700/30 overflow-hidden">
-          {/* Mac-style window controls */}
-          <div className="bg-gray-800 px-2 sm:px-4 py-1.5 sm:py-3 border-b border-gray-700/30 flex items-center">
-            <div className="flex space-x-1 sm:space-x-2">
-              <div className="h-[6px] w-[6px] sm:h-[8px] sm:w-[8px] rounded-full bg-red-500" />
-              <div className="h-[6px] w-[6px] sm:h-[8px] sm:w-[8px] rounded-full bg-yellow-500" />
-              <div className="h-[6px] w-[6px] sm:h-[8px] sm:w-[8px] rounded-full bg-green-500" />
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Editor Section */}
+          <div className="lg:col-span-2">
+            <div className="bg-gray-800 rounded-xl shadow-2xl border border-gray-700 overflow-hidden">
+              {/* Editor Header */}
+              <div className="bg-gray-850 px-4 py-3 flex items-center justify-between border-b border-gray-700">
+                <div className="flex items-center space-x-2">
+                  <Code className="h-5 w-5 text-blue-400" />
+                  <span className="text-sm font-medium text-gray-300">
+                    Code Editor
+                  </span>
+                </div>
+                {fileName && (
+                  <span className="text-xs font-mono text-gray-400 truncate">
+                    {fileName}
+                  </span>
+                )}
+              </div>
+
+              {/* Code Input */}
+              <div className="flex">
+                <LineNumbers />
+                <textarea
+                  className="w-full min-h-[450px] p-4 bg-gray-850 text-gray-200 font-mono text-sm leading-6 border-none focus:outline-none focus:ring-2 focus:ring-blue-500/50 resize-none"
+                  placeholder="Paste or type your code here..."
+                  value={code}
+                  onChange={(e) => setCode(e.target.value)}
+                  spellCheck="false"
+                />
+              </div>
+
+              {/* Controls */}
+              <div className="bg-gray-800 p-4 border-t border-gray-700 flex justify-between items-center">
+                <label
+                  htmlFor="fileUpload"
+                  className="flex items-center px-4 py-2 bg-gray-700 text-gray-200 rounded-lg cursor-pointer hover:bg-gray-600 transition-colors duration-200"
+                >
+                  <UploadCloud className="h-5 w-5 mr-2 text-blue-400" />
+                  <span className="text-sm font-medium">Upload Code</span>
+                </label>
+                <input
+                  id="fileUpload"
+                  type="file"
+                  accept=".py,.js,.java,.c,.cpp,.txt"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <button
+                  onClick={handleReview}
+                  className={`px-6 py-2 bg-blue-600 text-white rounded-lg font-medium text-sm flex items-center gap-2
+                    ${loading ? "opacity-60 cursor-not-allowed" : "hover:bg-blue-700"}
+                    transition-all duration-200 shadow-lg hover:shadow-blue-500/30`}
+                  disabled={loading || !code.trim() || backendStatus.includes("❌")}
+                >
+                  {loading && <Loader className="h-5 w-5 animate-spin" />}
+                  {loading ? "Analyzing..." : "Run Analysis"}
+                </button>
+              </div>
             </div>
-            {fileName && (
-              <span className="ml-2 sm:ml-4 text-[10px] sm:text-sm text-gray-400 font-mono truncate">
-                {fileName}
-              </span>
-            )}
+            <div className="text-center mt-4 text-sm text-gray-400">
+              {backendStatus}
+            </div>
           </div>
 
-          {/* Code editor with line numbers */}
-          <div className="flex">
-            <LineNumbers />
-            <textarea
-              className="w-full min-h-[20rem] sm:min-h-[24rem] px-2 sm:px-4 py-2 sm:py-3 bg-gray-900/50 text-gray-100 border-l border-gray-700/50 focus:outline-none font-mono text-[11px] sm:text-sm leading-5 sm:leading-6 resize-none"
-              placeholder="Paste your code here..."
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              spellCheck="false"
-            />
-          </div>
-
-          {/* File upload and controls */}
-          <div className="bg-gray-800/50 p-2 sm:p-4 border-t border-gray-700/30">
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <label htmlFor="fileUpload" className="flex items-center justify-center px-2 sm:px-6 py-1.5 sm:py-2 bg-gray-700/20 text-gray-100 border border-gray-700/50 rounded-md sm:rounded-lg cursor-pointer hover:bg-gray-700/30 transition-colors duration-200">
-                <UploadCloud className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="text-[10px] sm:text-sm">Choose File</span>
-              </label>
-              <input id="fileUpload" type="file" accept=".py,.js,.java,.c,.cpp,.txt" onChange={handleFileUpload} className="hidden" />
+          {/* Features Sidebar */}
+          <div className="space-y-6">
+            <h3 className="text-xl font-semibold text-gray-200">Why CodeSense?</h3>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-3">
+                <Zap className="h-6 w-6 text-yellow-400 flex-shrink-0" />
+                <div>
+                  <h4 className="text-md font-medium text-gray-200">
+                    Lightning Fast
+                  </h4>
+                  <p className="text-sm text-gray-400">
+                    Instant code analysis powered by advanced AI.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Shield className="h-6 w-6 text-green-400 flex-shrink-0" />
+                <div>
+                  <h4 className="text-md font-medium text-gray-200">
+                    Secure & Reliable
+                  </h4>
+                  <p className="text-sm text-gray-400">
+                    Your code stays safe with enterprise-grade security.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-3">
+                <FileText className="h-6 w-6 text-blue-400 flex-shrink-0" />
+                <div>
+                  <h4 className="text-md font-medium text-gray-200">
+                    Detailed Reports
+                  </h4>
+                  <p className="text-sm text-gray-400">
+                    Comprehensive insights to optimize your code.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="text-center mt-2 sm:mt-4 text-[10px] sm:text-sm font-medium text-gray-300">
-          {backendStatus}
-        </div>
-
-        <div className="flex justify-end mt-3 sm:mt-6">
-          <button
-            onClick={handleReview}
-            className={`px-3 sm:px-8 py-1.5 sm:py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-md sm:rounded-xl font-medium text-xs sm:text-base
-              ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:from-blue-600 hover:to-purple-700'}
-              transition-all duration-300 ease-in-out flex items-center gap-1.5 sm:gap-2 shadow-lg hover:shadow-blue-500/30`}
-            disabled={loading || !code.trim() || backendStatus.includes("❌")}
-          >
-            {loading && <Loader className="h-3 w-3 sm:h-5 sm:w-5 animate-spin" />}
-            {loading ? "Analyzing..." : "Analyze Code"}
-          </button>
-        </div>
+        {/* Footer Note */}
+        <footer className="mt-12 text-center text-sm text-gray-500">
+          © 2025 CodeSense. All rights reserved.
+        </footer>
       </div>
     </div>
   );
