@@ -33,8 +33,20 @@ const ReviewResult = () => {
   useEffect(() => {
     const storedReview = localStorage.getItem('codeReviewResult');
     if (storedReview) {
-      setReview(JSON.parse(storedReview));
+      try {
+        const parsedReview = JSON.parse(storedReview);
+        if (parsedReview && typeof parsedReview === 'object') {
+          setReview(parsedReview);
+        } else {
+          console.error('Invalid review data format');
+          navigate('/');
+        }
+      } catch (error) {
+        console.error('Error parsing review data:', error);
+        navigate('/');
+      }
     } else {
+      console.error('No review data found');
       navigate('/');
     }
   }, [navigate]);
