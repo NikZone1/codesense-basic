@@ -71,8 +71,35 @@ const CodeInput = () => {
         }
       });
       
-      if (response.data && typeof response.data === 'object') {
-        setReview(response.data);
+      if (response.data) {
+        // Create a properly structured review object
+        const reviewData = {
+          metrics: {
+            overall: response.data.score || 0,
+            quality: response.data.quality_score || 0,
+            security: response.data.security_score || 0,
+            performance: response.data.performance_score || 0
+          },
+          structureAnalysis: {
+            score: response.data.structure_score || 0,
+            findings: response.data.structure_findings || []
+          },
+          implementationReview: {
+            score: response.data.implementation_score || 0,
+            findings: response.data.implementation_findings || []
+          },
+          bestPractices: {
+            score: response.data.best_practices_score || 0,
+            findings: response.data.best_practices_findings || []
+          },
+          recommendations: response.data.recommendations || [],
+          corrections: {
+            hasCorrections: Boolean(response.data.corrections),
+            correctedCode: response.data.corrections?.code || code,
+            changes: response.data.corrections?.changes || []
+          }
+        };
+        setReview(reviewData);
         localStorage.setItem('originalCode', code);
       } else {
         throw new Error('Invalid response format from server');
@@ -126,7 +153,7 @@ const CodeInput = () => {
         <Icon className="h-4 w-4 text-red-500" />
       </div>
       <div className="flex items-baseline">
-        <span className="text-2xl font-bold text-white">{value}</span>
+        <span className={`text-2xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{value}</span>
         <span className="ml-2 text-gray-400">/100</span>
       </div>
       <div className="mt-2 h-1.5 bg-gray-700/50 rounded-full overflow-hidden">
@@ -136,7 +163,7 @@ const CodeInput = () => {
             value >= 60 ? 'bg-yellow-500' : 
             'bg-red-500'
           }`}
-          style={{ width: `${value}%` }}
+          style={{ width: `${Math.max(0, Math.min(100, value))}%` }}
         />
       </div>
     </div>
@@ -157,12 +184,12 @@ const CodeInput = () => {
            <CheckCircle2 className="h-5 w-5 text-blue-400" />}
         </div>
         <div className="flex-1">
-          <h4 className="text-sm font-medium text-blue-400 mb-1">{finding.aspect || finding.issue}</h4>
-          <p className="text-gray-300 text-sm mb-2">{finding.explanation}</p>
-          {finding.recommendation && (
+          <h4 className="text-sm font-medium text-blue-400 mb-1">{finding.message || finding.aspect || finding.issue}</h4>
+          <p className="text-gray-300 text-sm mb-2">{finding.explanation || finding.description}</p>
+          {(finding.recommendation || finding.fix) && (
             <div className="mt-2">
               <span className="text-purple-400 font-medium text-sm">Recommendation: </span>
-              <span className="text-gray-300 text-sm">{finding.recommendation}</span>
+              <span className="text-gray-300 text-sm">{finding.recommendation || finding.fix}</span>
             </div>
           )}
         </div>
