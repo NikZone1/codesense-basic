@@ -102,11 +102,11 @@ const CodeInput = () => {
           : 'bg-gradient-to-b from-white/90 to-transparent'
       } backdrop-blur-md`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <div className="flex items-center space-x-4">
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <div className="flex items-center">
-                <Code2 className={`h-8 w-8 ${isDarkMode ? 'text-red-500' : 'text-red-600'}`} />
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent ml-2">
+                <Code2 className={`h-6 w-6 sm:h-8 sm:w-8 ${isDarkMode ? 'text-red-500' : 'text-red-600'}`} />
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent ml-2">
                   CodeSense
                 </h1>
               </div>
@@ -116,16 +116,16 @@ const CodeInput = () => {
                 <a href="#contact" className={`${isDarkMode ? 'text-gray-300 hover:text-white' : 'text-gray-600 hover:text-gray-900'} transition-colors duration-200`}>Contact</a>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <button 
                 onClick={() => setShowSettings(!showSettings)}
-                className={`p-2 rounded-lg ${
+                className={`p-1.5 sm:p-2 rounded-lg ${
                   isDarkMode 
                     ? 'bg-gray-800/50 hover:bg-gray-700/50' 
                     : 'bg-gray-200/50 hover:bg-gray-300/50'
                 } transition-colors duration-200`}
               >
-                <Settings className={`h-5 w-5 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`} />
+                <Settings className={`h-4 w-4 sm:h-5 sm:w-5 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`} />
               </button>
             </div>
           </div>
@@ -133,22 +133,22 @@ const CodeInput = () => {
       </header>
 
       {/* Main content */}
-      <main className="pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+      <main className="pt-24 sm:pt-32 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Hero section with features */}
-          <div className="text-center mb-16">
-            <div className={`inline-flex items-center px-4 py-2 rounded-full ${
+          <div className="text-center mb-8 sm:mb-16">
+            <div className={`inline-flex items-center px-3 sm:px-4 py-1.5 sm:py-2 rounded-full ${
               isDarkMode ? 'bg-red-500/10 border-red-500/20' : 'bg-red-100 border-red-200'
-            } border mb-6`}>
-              <Sparkles className={`h-4 w-4 ${isDarkMode ? 'text-red-400' : 'text-red-500'} mr-2`} />
-              <span className={`${isDarkMode ? 'text-red-400' : 'text-red-500'} text-sm`}>AI-Powered Code Analysis</span>
+            } border mb-4 sm:mb-6`}>
+              <Sparkles className={`h-3 w-3 sm:h-4 sm:w-4 ${isDarkMode ? 'text-red-400' : 'text-red-500'} mr-2`} />
+              <span className={`${isDarkMode ? 'text-red-400' : 'text-red-500'} text-xs sm:text-sm`}>AI-Powered Code Analysis</span>
             </div>
-            <h2 className={`text-5xl sm:text-7xl font-bold mb-6 bg-gradient-to-r ${
+            <h2 className={`text-3xl sm:text-5xl lg:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r ${
               isDarkMode ? 'from-white to-gray-400' : 'from-gray-900 to-gray-600'
             } bg-clip-text text-transparent`}>
               Smart Code Review
             </h2>
-            <p className={`text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-2xl mx-auto mb-8`}>
+            <p className={`text-lg sm:text-xl ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} max-w-2xl mx-auto mb-6 sm:mb-8`}>
               <Typewriter
                 options={{
                   strings: ['Smart. Fast. Flawless.', 'AI powered code reviews at your fingertips.'],
@@ -157,27 +157,27 @@ const CodeInput = () => {
                 }}
               />
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8 max-w-4xl mx-auto mb-8 sm:mb-12">
               <div className={`${
                 isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
-              } backdrop-blur-lg rounded-xl p-6 border`}>
-                <Terminal className={`h-8 w-8 ${isDarkMode ? 'text-red-500' : 'text-red-600'} mb-4`} />
-                <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Code Analysis</h3>
-                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Advanced AI-powered code review and optimization suggestions</p>
+              } backdrop-blur-lg rounded-xl p-4 sm:p-6 border`}>
+                <Terminal className={`h-6 w-6 sm:h-8 sm:w-8 ${isDarkMode ? 'text-red-500' : 'text-red-600'} mb-2 sm:mb-4`} />
+                <h3 className={`text-lg sm:text-xl font-semibold mb-1 sm:mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Code Analysis</h3>
+                <p className={`text-sm sm:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Advanced AI-powered code review and optimization suggestions</p>
               </div>
               <div className={`${
                 isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
-              } backdrop-blur-lg rounded-xl p-6 border`}>
-                <Shield className={`h-8 w-8 ${isDarkMode ? 'text-red-500' : 'text-red-600'} mb-4`} />
-                <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Security Check</h3>
-                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Comprehensive security vulnerability detection</p>
+              } backdrop-blur-lg rounded-xl p-4 sm:p-6 border`}>
+                <Shield className={`h-6 w-6 sm:h-8 sm:w-8 ${isDarkMode ? 'text-red-500' : 'text-red-600'} mb-2 sm:mb-4`} />
+                <h3 className={`text-lg sm:text-xl font-semibold mb-1 sm:mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Security Check</h3>
+                <p className={`text-sm sm:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Comprehensive security vulnerability detection</p>
               </div>
               <div className={`${
                 isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
-              } backdrop-blur-lg rounded-xl p-6 border`}>
-                <Zap className={`h-8 w-8 ${isDarkMode ? 'text-red-500' : 'text-red-600'} mb-4`} />
-                <h3 className={`text-xl font-semibold mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Performance</h3>
-                <p className={`${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Optimization recommendations for better performance</p>
+              } backdrop-blur-lg rounded-xl p-4 sm:p-6 border`}>
+                <Zap className={`h-6 w-6 sm:h-8 sm:w-8 ${isDarkMode ? 'text-red-500' : 'text-red-600'} mb-2 sm:mb-4`} />
+                <h3 className={`text-lg sm:text-xl font-semibold mb-1 sm:mb-2 ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>Performance</h3>
+                <p className={`text-sm sm:text-base ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>Optimization recommendations for better performance</p>
               </div>
             </div>
           </div>
@@ -188,15 +188,15 @@ const CodeInput = () => {
           } backdrop-blur-lg rounded-xl shadow-2xl border overflow-hidden`}>
             <div className={`${
               isDarkMode ? 'bg-gray-900/50 border-gray-700/30' : 'bg-gray-200/50 border-gray-200/30'
-            } px-6 py-4 border-b flex items-center justify-between`}>
-              <div className="flex items-center space-x-3">
-                <div className="flex space-x-2">
-                  <div className="h-3 w-3 rounded-full bg-red-500" />
-                  <div className="h-3 w-3 rounded-full bg-yellow-500" />
-                  <div className="h-3 w-3 rounded-full bg-green-500" />
+            } px-4 sm:px-6 py-3 sm:py-4 border-b flex items-center justify-between`}>
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="flex space-x-1.5 sm:space-x-2">
+                  <div className="h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-red-500" />
+                  <div className="h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-yellow-500" />
+                  <div className="h-2 w-2 sm:h-3 sm:w-3 rounded-full bg-green-500" />
                 </div>
                 {fileName && (
-                  <span className={`text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} font-mono truncate`}>
+                  <span className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-400' : 'text-gray-600'} font-mono truncate max-w-[150px] sm:max-w-none`}>
                     {fileName}
                   </span>
                 )}
@@ -206,9 +206,9 @@ const CodeInput = () => {
             <div className="flex">
               <LineNumbers />
               <textarea
-                className={`w-full min-h-[20rem] sm:min-h-[24rem] px-6 py-4 ${
+                className={`w-full min-h-[15rem] sm:min-h-[24rem] px-4 sm:px-6 py-3 sm:py-4 ${
                   isDarkMode ? 'bg-gray-900/50 text-gray-100 border-gray-700/30' : 'bg-gray-200/50 text-gray-900 border-gray-200/30'
-                } border-l focus:outline-none font-mono text-sm leading-6 resize-none`}
+                } border-l focus:outline-none font-mono text-xs sm:text-sm leading-6 resize-none`}
                 placeholder="Paste your code here..."
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
@@ -218,32 +218,32 @@ const CodeInput = () => {
 
             <div className={`${
               isDarkMode ? 'bg-gray-900/50 border-gray-700/30' : 'bg-gray-200/50 border-gray-200/30'
-            } p-6 border-t`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <label htmlFor="fileUpload" className={`flex items-center justify-center px-6 py-2.5 ${
+            } p-4 sm:p-6 border-t`}>
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-0">
+                <div className="flex items-center space-x-4 w-full sm:w-auto">
+                  <label htmlFor="fileUpload" className={`flex items-center justify-center px-4 sm:px-6 py-2 sm:py-2.5 ${
                     isDarkMode ? 'bg-gray-800 text-white border-gray-700 hover:bg-gray-700' : 'bg-gray-200 text-gray-900 border-gray-300 hover:bg-gray-300'
-                  } border rounded-lg cursor-pointer transition-colors duration-200`}>
-                    <UploadCloud className="h-5 w-5 mr-2" />
-                    <span className="text-sm font-medium">Choose File</span>
+                  } border rounded-lg cursor-pointer transition-colors duration-200 w-full sm:w-auto`}>
+                    <UploadCloud className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                    <span className="text-xs sm:text-sm font-medium">Choose File</span>
                   </label>
                   <input id="fileUpload" type="file" accept=".py,.js,.java,.c,.cpp,.txt" onChange={handleFileUpload} className="hidden" />
                 </div>
                 <button
                   onClick={handleReview}
-                  className={`px-8 py-2.5 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg font-medium text-sm
+                  className={`px-6 sm:px-8 py-2 sm:py-2.5 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg font-medium text-xs sm:text-sm
                     ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:from-red-500 hover:to-red-600'}
-                    transition-all duration-300 ease-in-out flex items-center gap-2 shadow-lg hover:shadow-red-500/30`}
+                    transition-all duration-300 ease-in-out flex items-center gap-2 shadow-lg hover:shadow-red-500/30 w-full sm:w-auto`}
                   disabled={loading || !code.trim() || backendStatus.includes("❌")}
                 >
                   {loading ? (
                     <>
-                      <Loader className="h-5 w-5 animate-spin" />
+                      <Loader className="h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
                       <span>Analyzing...</span>
                     </>
                   ) : (
                     <>
-                      <Play className="h-5 w-5" />
+                      <Play className="h-4 w-4 sm:h-5 sm:w-5" />
                       <span>Analyze Code</span>
                     </>
                   )}

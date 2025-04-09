@@ -28,6 +28,7 @@ const ReviewResult = () => {
   const [review, setReview] = useState(null);
   const [activeTab, setActiveTab] = useState('original');
   const [expandedSections, setExpandedSections] = useState({});
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
     const storedReview = localStorage.getItem('codeReviewResult');
@@ -159,22 +160,30 @@ const ReviewResult = () => {
   const { metrics, structureAnalysis, implementationReview, bestPractices, recommendations } = review;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+    <div className={`min-h-screen ${
+      isDarkMode 
+        ? 'bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white' 
+        : 'bg-gradient-to-br from-gray-100 via-gray-50 to-white text-gray-900'
+    }`}>
       {/* Professional header with gradient */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/90 to-transparent backdrop-blur-md">
+      <header className={`fixed top-0 left-0 right-0 z-50 ${
+        isDarkMode 
+          ? 'bg-gradient-to-b from-black/90 to-transparent' 
+          : 'bg-gradient-to-b from-white/90 to-transparent'
+      } backdrop-blur-md`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <div className="flex items-center space-x-4">
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <button
                 onClick={() => navigate('/')}
                 className="flex items-center text-gray-300 hover:text-white transition-colors duration-200"
               >
-                <ArrowLeft className="h-5 w-5 mr-2" />
-                <span>Back</span>
+                <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2" />
+                <span className="text-sm sm:text-base">Back</span>
               </button>
               <div className="flex items-center">
-                <Code2 className="h-8 w-8 text-red-500" />
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent ml-2" style={{ fontFamily: "'Bebas Neue', cursive" }}>
+                <Code2 className={`h-6 w-6 sm:h-8 sm:w-8 ${isDarkMode ? 'text-red-500' : 'text-red-600'}`} />
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent ml-2">
                   CodeSense
                 </h1>
               </div>
@@ -184,21 +193,23 @@ const ReviewResult = () => {
       </header>
 
       {/* Main content */}
-      <main className="pt-32 pb-12 px-4 sm:px-6 lg:px-8">
+      <main className="pt-24 sm:pt-32 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Metrics section with improved design */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
             {Object.entries(metrics).map(([key, value]) => (
-              <div key={key} className="bg-gray-800/50 backdrop-blur-lg rounded-xl p-6 border border-gray-700/30">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-gray-400 text-sm uppercase tracking-wider">{key}</h3>
-                  <BarChart4 className="h-5 w-5 text-red-500" />
+              <div key={key} className={`${
+                isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+              } backdrop-blur-lg rounded-xl p-4 sm:p-6 border`}>
+                <div className="flex items-center justify-between mb-2 sm:mb-4">
+                  <h3 className={`text-xs sm:text-sm uppercase tracking-wider ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>{key}</h3>
+                  <BarChart4 className={`h-4 w-4 sm:h-5 sm:w-5 ${isDarkMode ? 'text-red-500' : 'text-red-600'}`} />
                 </div>
                 <div className="flex items-baseline">
-                  <span className="text-4xl font-bold text-white">{value}</span>
-                  <span className="ml-2 text-gray-400">/100</span>
+                  <span className={`text-2xl sm:text-4xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{value}</span>
+                  <span className={`ml-2 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`}>/100</span>
                 </div>
-                <div className="mt-4 h-2 bg-gray-700/50 rounded-full overflow-hidden">
+                <div className="mt-2 sm:mt-4 h-1.5 sm:h-2 bg-gray-700/50 rounded-full overflow-hidden">
                   <div 
                     className={`h-full rounded-full ${
                       value >= 80 ? 'bg-green-500' : 
@@ -213,124 +224,140 @@ const ReviewResult = () => {
           </div>
 
           {/* Code comparison section with improved design */}
-          <div className="bg-gray-800/50 backdrop-blur-lg rounded-xl shadow-2xl border border-gray-700/30 overflow-hidden mb-12">
-            <div className="bg-gray-900/50 px-6 py-4 border-b border-gray-700/30">
-              <div className="flex space-x-4">
+          <div className={`${
+            isDarkMode ? 'bg-gray-800/50 border-gray-700/30' : 'bg-gray-100/50 border-gray-200/30'
+          } backdrop-blur-lg rounded-xl shadow-2xl border overflow-hidden mb-8 sm:mb-12`}>
+            <div className={`${
+              isDarkMode ? 'bg-gray-900/50 border-gray-700/30' : 'bg-gray-200/50 border-gray-200/30'
+            } px-4 sm:px-6 py-3 sm:py-4 border-b`}>
+              <div className="flex flex-wrap gap-2 sm:gap-4">
                 <button
                   onClick={() => setActiveTab("original")}
-                  className={`px-6 py-2.5 rounded-lg transition-all duration-200 flex items-center gap-2 ${
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg transition-all duration-200 flex items-center gap-2 text-xs sm:text-sm ${
                     activeTab === "original" 
-                      ? "bg-red-600 text-white shadow-lg shadow-red-500/20" 
-                      : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                      ? `${isDarkMode ? 'bg-red-600 text-white' : 'bg-red-500 text-white'} shadow-lg shadow-red-500/20` 
+                      : `${isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-700/50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'}`
                   }`}
                 >
-                  <FileCode className="h-5 w-5" />
+                  <FileCode className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span>Original</span>
                 </button>
                 <button
                   onClick={() => setActiveTab("corrected")}
-                  className={`px-6 py-2.5 rounded-lg transition-all duration-200 flex items-center gap-2 ${
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg transition-all duration-200 flex items-center gap-2 text-xs sm:text-sm ${
                     activeTab === "corrected" 
-                      ? "bg-red-600 text-white shadow-lg shadow-red-500/20" 
-                      : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                      ? `${isDarkMode ? 'bg-red-600 text-white' : 'bg-red-500 text-white'} shadow-lg shadow-red-500/20` 
+                      : `${isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-700/50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'}`
                   }`}
                 >
-                  <CheckCircle2 className="h-5 w-5" />
+                  <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span>Corrected</span>
                 </button>
                 <button
                   onClick={() => setActiveTab("changes")}
-                  className={`px-6 py-2.5 rounded-lg transition-all duration-200 flex items-center gap-2 ${
+                  className={`px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg transition-all duration-200 flex items-center gap-2 text-xs sm:text-sm ${
                     activeTab === "changes" 
-                      ? "bg-red-600 text-white shadow-lg shadow-red-500/20" 
-                      : "text-gray-400 hover:text-white hover:bg-gray-700/50"
+                      ? `${isDarkMode ? 'bg-red-600 text-white' : 'bg-red-500 text-white'} shadow-lg shadow-red-500/20` 
+                      : `${isDarkMode ? 'text-gray-400 hover:text-white hover:bg-gray-700/50' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200/50'}`
                   }`}
                 >
-                  <GitCompare className="h-5 w-5" />
+                  <GitCompare className="h-4 w-4 sm:h-5 sm:w-5" />
                   <span>Changes</span>
                 </button>
               </div>
             </div>
-            <div className="p-6">
-              <pre className="font-mono text-sm text-gray-300 whitespace-pre-wrap">
-                {activeTab === "original" && localStorage.getItem('originalCode')}
-                {activeTab === "corrected" && review.corrections.correctedCode}
-                {activeTab === "changes" && review.corrections.changes.map(change => change.correction).join('\n')}
-              </pre>
+
+            <div className="p-4 sm:p-6">
+              {activeTab === "changes" ? (
+                <div className="space-y-4">
+                  {review.corrections.changes.map((change, index) => (
+                    <div key={index} className={`${
+                      isDarkMode ? 'border-gray-700/30' : 'border-gray-200/30'
+                    } border rounded-lg p-3 sm:p-4`}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <GitCompare className={`h-4 w-4 sm:h-5 sm:w-5 ${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`} />
+                        <span className={`text-xs sm:text-sm font-medium ${isDarkMode ? 'text-blue-400' : 'text-blue-500'}`}>{change.type}</span>
+                        <span className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>({change.location})</span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 mt-2 sm:mt-3">
+                        <div className={`p-2 sm:p-3 ${
+                          isDarkMode ? 'bg-red-500/10' : 'bg-red-100'
+                        } rounded-lg`}>
+                          <div className={`text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
+                            isDarkMode ? 'text-red-400' : 'text-red-500'
+                          }`}>Original:</div>
+                          <pre className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} overflow-x-auto`}>{change.original}</pre>
+                        </div>
+                        <div className={`p-2 sm:p-3 ${
+                          isDarkMode ? 'bg-green-500/10' : 'bg-green-100'
+                        } rounded-lg`}>
+                          <div className={`text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
+                            isDarkMode ? 'text-green-400' : 'text-green-500'
+                          }`}>Correction:</div>
+                          <pre className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} overflow-x-auto`}>{change.correction}</pre>
+                        </div>
+                      </div>
+                      <div className="mt-2 sm:mt-3">
+                        <span className={`text-xs sm:text-sm font-medium ${
+                          isDarkMode ? 'text-purple-400' : 'text-purple-500'
+                        }`}>Explanation: </span>
+                        <span className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{change.explanation}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className={`${
+                  isDarkMode ? 'bg-gray-900/50' : 'bg-gray-200/50'
+                } rounded-lg p-3 sm:p-4 overflow-x-auto`}>
+                  <pre className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'} whitespace-pre-wrap`}>
+                    {activeTab === "original" ? localStorage.getItem('originalCode') : review.corrections.correctedCode}
+                  </pre>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Review sections with improved design */}
+          {/* Review sections */}
           <div className="space-y-6">
-            {Object.entries(review).map(([section, data]) => (
-              <div key={section} className="bg-gray-800/50 backdrop-blur-lg rounded-xl border border-gray-700/30 overflow-hidden">
-                <button
-                  onClick={() => setExpandedSections(prev => ({ ...prev, [section]: !prev[section] }))}
-                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-700/30 transition-colors duration-200"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="p-2 bg-gray-700/30 rounded-lg">
-                      {section === 'structureAnalysis' && <Terminal className="h-5 w-5 text-red-500" />}
-                      {section === 'implementationReview' && <Code className="h-5 w-5 text-red-500" />}
-                      {section === 'bestPractices' && <Shield className="h-5 w-5 text-red-500" />}
-                      {section === 'recommendations' && <Sparkles className="h-5 w-5 text-red-500" />}
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-white">{section}</h3>
-                      {data.score && (
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className={`h-2 w-2 rounded-full ${
-                            data.score >= 80 ? "bg-green-500" :
-                            data.score >= 60 ? "bg-yellow-500" :
-                            "bg-red-500"
-                          }`} />
-                          <span className="text-sm text-gray-400">Score: {data.score}/100</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {expandedSections[section] ? (
-                    <ChevronUp className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-                {expandedSections[section] && (
-                  <div className="px-6 pb-6">
-                    <p className="text-gray-400 mb-6">{data.explanation}</p>
-                    {data.findings && data.findings.length > 0 && (
-                      <div className="space-y-4">
-                        {data.findings.map((finding, index) => (
-                          <div key={index} className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/30">
-                            <div className="flex items-start gap-4">
-                              <div className="p-2 rounded-lg bg-gray-800/50">
-                                {finding.severity === "high" ? (
-                                  <XCircle className="h-5 w-5 text-red-500" />
-                                ) : finding.severity === "medium" ? (
-                                  <AlertCircle className="h-5 w-5 text-yellow-500" />
-                                ) : (
-                                  <Info className="h-5 w-5 text-blue-500" />
-                                )}
-                              </div>
-                              <div className="flex-1">
-                                <h4 className="text-white font-medium mb-2">{finding.title}</h4>
-                                <p className="text-gray-400 mb-3">{finding.description}</p>
-                                {finding.recommendation && (
-                                  <div className="flex items-center gap-2 text-green-400">
-                                    <CheckCircle2 className="h-4 w-4" />
-                                    <span className="text-sm">{finding.recommendation}</span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
+            <SectionCard title="Structure Analysis" icon={Terminal} score={structureAnalysis.score}>
+              <div className="space-y-3">
+                {structureAnalysis.findings.map((finding, index) => (
+                  <Finding key={index} finding={finding} />
+                ))}
               </div>
-            ))}
+            </SectionCard>
+
+            <SectionCard title="Implementation Review" icon={Code} score={implementationReview.score}>
+              <div className="space-y-3">
+                {implementationReview.findings.map((finding, index) => (
+                  <Finding key={index} finding={finding} />
+                ))}
+              </div>
+            </SectionCard>
+
+            <SectionCard title="Best Practices" icon={Shield} score={bestPractices.score}>
+              <div className="space-y-3">
+                {bestPractices.findings.map((finding, index) => (
+                  <Finding key={index} finding={finding} />
+                ))}
+              </div>
+            </SectionCard>
+
+            <SectionCard title="Recommendations" icon={Zap}>
+              <div className="space-y-3">
+                {recommendations.map((recommendation, index) => (
+                  <div key={index} className={`${
+                    isDarkMode ? 'border-gray-700/30' : 'border-gray-200/30'
+                  } border rounded-lg p-3 sm:p-4`}>
+                    <h4 className={`text-xs sm:text-sm font-medium mb-1 sm:mb-2 ${
+                      isDarkMode ? 'text-blue-400' : 'text-blue-500'
+                    }`}>{recommendation.title}</h4>
+                    <p className={`text-xs sm:text-sm ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>{recommendation.description}</p>
+                  </div>
+                ))}
+              </div>
+            </SectionCard>
           </div>
         </div>
       </main>
